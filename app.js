@@ -315,3 +315,16 @@ document
 // ======================
 
 loadTornadoData();
+// ======================
+// CLOSE PANEL
+// ======================
+
+document
+  .getElementById("closePanel")
+  .addEventListener("click", () => {
+
+    document
+      .getElementById("detailsPanel")
+      .classList.add("hidden");
+
+  });
