@@ -80,3 +80,63 @@ button:hover {
     height: calc(100vh - 320px);
   }
 }
+/* =========================
+   DETAILS PANEL
+========================= */
+
+#detailsPanel {
+  width: 360px;
+  background: #111827;
+  border-left: 2px solid #374151;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+#detailsPanel.hidden {
+  transform: translateX(100%);
+}
+
+#detailsContent {
+  padding: 20px;
+}
+
+#detailsContent h2 {
+  margin-top: 0;
+}
+
+#closePanel {
+  width: 100%;
+  background: #1f2937;
+  border: none;
+  color: white;
+  padding: 14px;
+  font-size: 18px;
+  cursor: pointer;
+  border-bottom: 1px solid #374151;
+}
+
+#closePanel:hover {
+  background: #374151;
+}
+
+/* =========================
+   MOBILE PANEL
+========================= */
+
+@media (max-width: 768px) {
+
+  #detailsPanel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    border-left: none;
+    border-top: 2px solid #374151;
+  }
+
+  #detailsPanel.hidden {
+    transform: translateY(100%);
+  }
+}
