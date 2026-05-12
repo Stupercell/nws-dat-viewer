@@ -97,28 +97,69 @@ document
 
 function getEFColor(rating) {
 
-  switch (rating) {
+// ======================
+// LOAD NOAA PHOTOS
+// ======================
 
-    case "EF0":
-      return "#22c55e";
+async function loadSurveyPhotos(objectId) {
 
-    case "EF1":
-      return "#eab308";
+  try {
 
-    case "EF2":
-      return "#f97316";
+    const attachmentUrl =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments?f=json`;
 
-    case "EF3":
-      return "#ef4444";
+    const response =
+      await fetch(attachmentUrl);
 
-    case "EF4":
-      return "#d946ef";
+    const data =
+      await response.json();
 
-    case "EF5":
-      return "#7e22ce";
+    if (
+      !data.attachmentInfos ||
+      data.attachmentInfos.length === 0
+    ) {
+      return `
+        <p>No survey photos available.</p>
+      `;
+    }
 
-    default:
-      return "#9ca3af";
+    let html = `
+      <div class="photo-gallery">
+        <h3>Survey Photos</h3>
+
+        <div class="photo-grid">
+    `;
+
+    data.attachmentInfos.forEach(photo => {
+
+      const imageUrl =
+        `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments/${photo.id}`;
+
+      html += `
+        <img
+          src="${imageUrl}"
+          alt="Survey Photo"
+        >
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+
+    return html;
+
+  } catch (error) {
+
+    console.error(
+      "Error loading photos:",
+      error
+    );
+
+    return `
+      <p>Error loading photos.</p>
+    `;
   }
 }
 
