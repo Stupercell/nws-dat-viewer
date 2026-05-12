@@ -22,18 +22,45 @@ const satelliteMap = L.tileLayer(
   }
 );
 
+const lightMap = L.tileLayer(
+  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+  {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+  }
+);
+
+const terrainMap = L.tileLayer(
+  'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+  {
+    attribution: '&copy; OpenTopoMap contributors'
+  }
+);
+
 const baseMaps = {
   "Dark": darkMap,
-  "Satellite": satelliteMap
+  "Satellite": satelliteMap,
+  "Light": lightMap,
+  "Terrain": terrainMap
 };
 
-L.control.layers(baseMaps).addTo(map);
+// ======================
+// OVERLAY CONTROL
+// ======================
+
+const overlayMaps = {};
+
+const layerControl =
+  L.control.layers(
+    baseMaps,
+    overlayMaps
+  ).addTo(map);
 
 // ======================
-// GLOBAL LAYER
+// GLOBAL LAYERS
 // ======================
 
 let tornadoLayer;
+let damagePointLayer;
 
 // ======================
 // STATES
@@ -66,6 +93,17 @@ states.forEach(state => {
 // EF FILTER
 // ======================
 
+const efWrapper =
+  document.createElement("div");
+
+efWrapper.className = "filter-group";
+
+const efLabel =
+  document.createElement("label");
+
+efLabel.textContent =
+  "EF Rating";
+
 const efFilter =
   document.createElement("select");
 
@@ -96,10 +134,13 @@ efFilter.id = "efFilter";
 
 });
 
+efWrapper.appendChild(efLabel);
+efWrapper.appendChild(efFilter);
+
 document
   .getElementById("sidebar")
   .insertBefore(
-    efFilter,
+    efWrapper,
     document.getElementById("applyFilters")
   );
 
@@ -135,7 +176,31 @@ function getEFColor(rating) {
 }
 
 // ======================
-// LOAD PHOTOS
+// FORMAT DATE
+// ======================
+
+function formatDate(dateValue) {
+
+  if (!dateValue) {
+    return "N/A";
+  }
+
+  try {
+
+    const date =
+      new Date(dateValue);
+
+    return date.toLocaleString();
+
+  } catch {
+
+    return "N/A";
+
+  }
+}
+
+// ======================
+// LOAD SURVEY PHOTOS
 // ======================
 
 async function loadSurveyPhotos(objectId) {
@@ -178,6 +243,7 @@ async function loadSurveyPhotos(objectId) {
         <img
           src="${imageUrl}"
           alt="Survey Photo"
+          onclick="window.open('${imageUrl}')"
         >
       `;
     });
@@ -192,7 +258,7 @@ async function loadSurveyPhotos(objectId) {
   } catch (error) {
 
     console.error(
-      "Error loading photos:",
+      "Error loading survey photos:",
       error
     );
 
@@ -200,6 +266,212 @@ async function loadSurveyPhotos(objectId) {
       <p>Error loading photos.</p>
     `;
   }
+}
+
+// ======================
+// TORNADO DETAILS PANEL
+// ======================
+
+async function showTornadoDetails(props) {
+
+  const panel =
+    document.getElementById(
+      "detailsPanel"
+    );
+
+  const content =
+    document.getElementById(
+      "detailsContent"
+    );
+
+  panel.classList.remove(
+    "hidden"
+  );
+
+  const photoHtml =
+    await loadSurveyPhotos(
+      props.OBJECTID
+    );
+
+  content.innerHTML = `
+
+    <div
+      class="detail-header"
+      style="
+        background:
+        ${getEFColor(props.RATING)};
+      "
+    >
+
+      <h2>
+        ${props.RATING || 'EFU'}
+      </h2>
+
+      <div>
+        ${props.EVENT_ID || 'Unknown Event'}
+      </div>
+
+    </div>
+
+    <div class="detail-grid">
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          State
+        </div>
+
+        <div class="detail-card-value">
+          ${props.STATE || 'N/A'}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Injuries
+        </div>
+
+        <div class="detail-card-value">
+          ${props.INJURIES || 0}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Fatalities
+        </div>
+
+        <div class="detail-card-value">
+          ${props.FATALITIES || 0}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Begin Date
+        </div>
+
+        <div class="detail-card-value">
+          ${formatDate(props.BEGIN_DATE)}
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="comment-box">
+
+      <h3>Survey Comments</h3>
+
+      <p>
+        ${props.COMMENTS || 'No comments available.'}
+      </p>
+
+    </div>
+
+    ${photoHtml}
+
+  `;
+}
+
+// ======================
+// DAMAGE POINT DETAILS
+// ======================
+
+function showDamagePointDetails(props) {
+
+  const panel =
+    document.getElementById(
+      "detailsPanel"
+    );
+
+  const content =
+    document.getElementById(
+      "detailsContent"
+    );
+
+  panel.classList.remove(
+    "hidden"
+  );
+
+  content.innerHTML = `
+
+    <div
+      class="detail-header"
+      style="
+        background:#0284c7;
+      "
+    >
+
+      <h2>
+        Damage Point
+      </h2>
+
+      <div>
+        ${props.DI || 'Unknown'}
+      </div>
+
+    </div>
+
+    <div class="detail-grid">
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Damage Indicator
+        </div>
+
+        <div class="detail-card-value">
+          ${props.DI || 'N/A'}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Degree of Damage
+        </div>
+
+        <div class="detail-card-value">
+          ${props.DOD || 'N/A'}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Estimated Wind
+        </div>
+
+        <div class="detail-card-value">
+          ${props.ESTIMATED_WIND || 'N/A'}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          State
+        </div>
+
+        <div class="detail-card-value">
+          ${props.STATE || 'N/A'}
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
 }
 
 // ======================
@@ -211,10 +483,14 @@ async function loadTornadoData() {
   try {
 
     const state =
-      document.getElementById("stateFilter").value;
+      document.getElementById(
+        "stateFilter"
+      ).value;
 
     const ef =
-      document.getElementById("efFilter").value;
+      document.getElementById(
+        "efFilter"
+      ).value;
 
     let where = "1=1";
 
@@ -236,140 +512,68 @@ async function loadTornadoData() {
       await response.json();
 
     if (tornadoLayer) {
-      map.removeLayer(tornadoLayer);
+
+      map.removeLayer(
+        tornadoLayer
+      );
+
     }
 
-    tornadoLayer = L.geoJSON(data, {
+    tornadoLayer =
+      L.geoJSON(data, {
 
-      style: function(feature) {
+        style: function(feature) {
 
-        return {
+          return {
 
-          color: getEFColor(
-            feature.properties.RATING
-          ),
+            color: getEFColor(
+              feature.properties.RATING
+            ),
 
-          weight: 3
+            weight: 3
 
-        };
-      },
+          };
+        },
 
-      onEachFeature:
-        function(feature, layer) {
+        onEachFeature:
+          function(feature, layer) {
 
-        const props =
-          feature.properties;
+          layer.on(
+            "click",
+            async () => {
 
-        layer.on(
-          "click",
-          async () => {
-
-            const panel =
-              document.getElementById(
-                "detailsPanel"
+              await showTornadoDetails(
+                feature.properties
               );
 
-            const content =
-              document.getElementById(
-                "detailsContent"
-              );
+            }
+          );
+        }
 
-            panel.classList.remove(
-              "hidden"
-            );
+      }).addTo(map);
 
-            const photoHtml =
-              await loadSurveyPhotos(
-                props.OBJECTID
-              );
+    if (
+      !overlayMaps["Tornado Paths"]
+    ) {
 
-            content.innerHTML = `
+      overlayMaps[
+        "Tornado Paths"
+      ] = tornadoLayer;
 
-              <div
-                class="detail-header"
-                style="
-                  background:
-                  ${getEFColor(props.RATING)};
-                "
-              >
-
-                <h2>
-                  ${props.RATING || 'EFU'}
-                </h2>
-
-                <div>
-                  ${props.EVENT_ID || 'Unknown Event'}
-                </div>
-
-              </div>
-
-              <div class="detail-grid">
-
-                <div class="detail-card">
-
-                  <div class="detail-card-label">
-                    State
-                  </div>
-
-                  <div class="detail-card-value">
-                    ${props.STATE || 'N/A'}
-                  </div>
-
-                </div>
-
-                <div class="detail-card">
-
-                  <div class="detail-card-label">
-                    Injuries
-                  </div>
-
-                  <div class="detail-card-value">
-                    ${props.INJURIES || 0}
-                  </div>
-
-                </div>
-
-                <div class="detail-card">
-
-                  <div class="detail-card-label">
-                    Fatalities
-                  </div>
-
-                  <div class="detail-card-value">
-                    ${props.FATALITIES || 0}
-                  </div>
-
-                </div>
-
-                <div class="detail-card">
-
-                  <div class="detail-card-label">
-                    Comments
-                  </div>
-
-                  <div class="detail-card-value">
-                    ${props.COMMENTS || 'None'}
-                  </div>
-
-                </div>
-
-              </div>
-
-              ${photoHtml}
-
-            `;
-          }
-        );
-      }
-
-    }).addTo(map);
+      layerControl.addOverlay(
+        tornadoLayer,
+        "Tornado Paths"
+      );
+    }
 
     if (
       tornadoLayer.getBounds().isValid()
     ) {
+
       map.fitBounds(
         tornadoLayer.getBounds()
       );
+
     }
 
   } catch (error) {
@@ -382,11 +586,97 @@ async function loadTornadoData() {
 }
 
 // ======================
-// APPLY FILTERS
+// LOAD DAMAGE POINTS
+// ======================
+
+async function loadDamagePoints() {
+
+  try {
+
+    const url =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/1/query?where=1%3D1&outFields=*&f=geojson`;
+
+    const response =
+      await fetch(url);
+
+    const data =
+      await response.json();
+
+    if (damagePointLayer) {
+
+      map.removeLayer(
+        damagePointLayer
+      );
+
+    }
+
+    damagePointLayer =
+      L.geoJSON(data, {
+
+        pointToLayer:
+          function(feature, latlng) {
+
+          return L.circleMarker(
+            latlng,
+            {
+              radius: 5,
+              fillColor: "#38bdf8",
+              color: "#ffffff",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.9
+            }
+          );
+        },
+
+        onEachFeature:
+          function(feature, layer) {
+
+          layer.on(
+            "click",
+            () => {
+
+              showDamagePointDetails(
+                feature.properties
+              );
+
+            }
+          );
+        }
+
+      }).addTo(map);
+
+    if (
+      !overlayMaps["Damage Points"]
+    ) {
+
+      overlayMaps[
+        "Damage Points"
+      ] = damagePointLayer;
+
+      layerControl.addOverlay(
+        damagePointLayer,
+        "Damage Points"
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Error loading damage points:",
+      error
+    );
+  }
+}
+
+// ======================
+// FILTER BUTTON
 // ======================
 
 document
-  .getElementById("applyFilters")
+  .getElementById(
+    "applyFilters"
+  )
   .addEventListener(
     "click",
     loadTornadoData
@@ -397,14 +687,20 @@ document
 // ======================
 
 document
-  .getElementById("closePanel")
+  .getElementById(
+    "closePanel"
+  )
   .addEventListener(
     "click",
     () => {
 
       document
-        .getElementById("detailsPanel")
-        .classList.add("hidden");
+        .getElementById(
+          "detailsPanel"
+        )
+        .classList.add(
+          "hidden"
+        );
 
     }
   );
@@ -414,3 +710,4 @@ document
 // ======================
 
 loadTornadoData();
+loadDamagePoints();
