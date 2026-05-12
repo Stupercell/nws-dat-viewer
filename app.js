@@ -226,30 +226,58 @@ async function loadTornadoData() {
 
         const props = feature.properties;
 
-        layer.bindPopup(`
-          <div style="min-width:220px">
+        // ======================
+// CLICK EVENT
+// ======================
 
-            <h3 style="margin-top:0;">
-              ${props.EVENT_ID || 'Unknown Event'}
-            </h3>
+layer.on("click", () => {
 
-            <strong>Rating:</strong>
-            ${props.RATING || 'N/A'}<br>
+  const panel =
+    document.getElementById("detailsPanel");
 
-            <strong>State:</strong>
-            ${props.STATE || 'N/A'}<br>
+  const content =
+    document.getElementById("detailsContent");
 
-            <strong>Injuries:</strong>
-            ${props.INJURIES || 0}<br>
+  panel.classList.remove("hidden");
 
-            <strong>Fatalities:</strong>
-            ${props.FATALITIES || 0}<br>
+  content.innerHTML = `
 
-            <strong>Comments:</strong><br>
-            ${props.COMMENTS || 'None'}
+    <h2>
+      ${props.EVENT_ID || 'Unknown Event'}
+    </h2>
 
-          </div>
-        `);
+    <hr>
+
+    <p>
+      <strong>EF Rating:</strong>
+      ${props.RATING || 'N/A'}
+    </p>
+
+    <p>
+      <strong>State:</strong>
+      ${props.STATE || 'N/A'}
+    </p>
+
+    <p>
+      <strong>Injuries:</strong>
+      ${props.INJURIES || 0}
+    </p>
+
+    <p>
+      <strong>Fatalities:</strong>
+      ${props.FATALITIES || 0}
+    </p>
+
+    <p>
+      <strong>Comments:</strong>
+    </p>
+
+    <p>
+      ${props.COMMENTS || 'No comments available.'}
+    </p>
+
+  `;
+});
       }
 
     }).addTo(map);
