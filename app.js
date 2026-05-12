@@ -240,43 +240,78 @@ layer.on("click", () => {
 
   panel.classList.remove("hidden");
 
-  content.innerHTML = `
+content.innerHTML = `
 
+  <div
+    class="detail-header"
+    style="
+      background:${getEFColor(props.RATING)};
+    "
+  >
     <h2>
-      ${props.EVENT_ID || 'Unknown Event'}
+      ${props.RATING || 'EFU'}
     </h2>
 
-    <hr>
+    <div>
+      ${props.EVENT_ID || 'Unknown Event'}
+    </div>
+  </div>
 
-    <p>
-      <strong>EF Rating:</strong>
-      ${props.RATING || 'N/A'}
-    </p>
+  <div class="detail-grid">
 
-    <p>
-      <strong>State:</strong>
-      ${props.STATE || 'N/A'}
-    </p>
+    <div class="detail-card">
+      <div class="detail-card-label">
+        State
+      </div>
 
-    <p>
-      <strong>Injuries:</strong>
-      ${props.INJURIES || 0}
-    </p>
+      <div class="detail-card-value">
+        ${props.STATE || 'N/A'}
+      </div>
+    </div>
 
-    <p>
-      <strong>Fatalities:</strong>
-      ${props.FATALITIES || 0}
-    </p>
+    <div class="detail-card">
+      <div class="detail-card-label">
+        Injuries
+      </div>
 
-    <p>
-      <strong>Comments:</strong>
-    </p>
+      <div class="detail-card-value">
+        ${props.INJURIES || 0}
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-card-label">
+        Fatalities
+      </div>
+
+      <div class="detail-card-value">
+        ${props.FATALITIES || 0}
+      </div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-card-label">
+        Begin Date
+      </div>
+
+      <div class="detail-card-value">
+        ${props.BEGIN_DATE || 'N/A'}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="comment-box">
+
+    <h3>Survey Comments</h3>
 
     <p>
       ${props.COMMENTS || 'No comments available.'}
     </p>
 
-  `;
+  </div>
+
+`;
 });
       }
 
