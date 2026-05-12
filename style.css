@@ -1,9 +1,13 @@
-html, body {
+html,
+body {
 
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden;
+
   font-family: Arial, sans-serif;
+
   background: #111827;
   color: white;
 
@@ -20,20 +24,43 @@ body {
 #sidebar {
 
   width: 320px;
-  background: #1f2937;
+
+  background: #111827;
+
+  border-right: 2px solid #1f2937;
+
   padding: 20px;
+
   box-sizing: border-box;
+
   overflow-y: auto;
-  border-right: 2px solid #374151;
+
+  z-index: 1000;
 
 }
 
-#sidebar h1 {
+.sidebar-header {
+  margin-bottom: 25px;
+}
 
-  margin-top: 0;
-  font-size: 24px;
+.sidebar-header h1 {
+
+  margin: 0;
+  font-size: 30px;
 
 }
+
+.sidebar-header p {
+
+  color: #9ca3af;
+  margin-top: 8px;
+  line-height: 1.4;
+
+}
+
+/* =========================
+   FILTERS
+========================= */
 
 .filter-group {
   margin-bottom: 20px;
@@ -42,7 +69,11 @@ body {
 .filter-group label {
 
   display: block;
-  margin-bottom: 6px;
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  color: #d1d5db;
 
 }
 
@@ -50,30 +81,90 @@ body {
 .filter-group select {
 
   width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #374151;
+
+  padding: 12px;
+
+  background: #1f2937;
+
+  border: 1px solid #374151;
+
+  border-radius: 10px;
+
   color: white;
+
   box-sizing: border-box;
+
+  font-size: 14px;
 
 }
 
 button {
 
   width: 100%;
-  padding: 12px;
+
+  padding: 14px;
+
   background: #2563eb;
+
   border: none;
-  border-radius: 8px;
+
+  border-radius: 10px;
+
   color: white;
-  font-size: 16px;
+
+  font-size: 15px;
+
   cursor: pointer;
+
+  transition: background 0.2s ease;
 
 }
 
 button:hover {
   background: #1d4ed8;
+}
+
+/* =========================
+   LEGEND
+========================= */
+
+#legend {
+
+  margin-top: 30px;
+
+  padding: 16px;
+
+  background: #1f2937;
+
+  border-radius: 12px;
+
+}
+
+#legend h3 {
+
+  margin-top: 0;
+  margin-bottom: 14px;
+
+}
+
+.legend-item {
+
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 10px;
+
+}
+
+.legend-color {
+
+  width: 18px;
+  height: 18px;
+
+  border-radius: 4px;
+
+  margin-right: 10px;
+
 }
 
 /* =========================
@@ -83,7 +174,10 @@ button:hover {
 #map {
 
   flex: 1;
+
   height: 100vh;
+
+  z-index: 1;
 
 }
 
@@ -93,11 +187,16 @@ button:hover {
 
 #detailsPanel {
 
-  width: 360px;
+  width: 380px;
+
   background: #111827;
-  border-left: 2px solid #374151;
+
+  border-left: 2px solid #1f2937;
+
   overflow-y: auto;
+
   transition: transform 0.3s ease;
+
   z-index: 1000;
 
 }
@@ -113,12 +212,19 @@ button:hover {
 #closePanel {
 
   width: 100%;
+
   background: #1f2937;
+
   border: none;
+
   color: white;
-  padding: 14px;
-  font-size: 18px;
+
+  padding: 16px;
+
+  font-size: 20px;
+
   cursor: pointer;
+
   border-bottom: 1px solid #374151;
 
 }
@@ -128,30 +234,47 @@ button:hover {
 }
 
 /* =========================
-   DETAIL CARDS
+   DETAIL HEADER
 ========================= */
 
 .detail-header {
 
   padding: 18px;
+
   border-radius: 12px;
-  margin-bottom: 18px;
-  color: white;
+
+  margin-bottom: 20px;
 
 }
 
 .detail-header h2 {
 
   margin: 0;
-  font-size: 28px;
+
+  font-size: 30px;
 
 }
+
+.detail-header div {
+
+  margin-top: 6px;
+
+  opacity: 0.9;
+
+}
+
+/* =========================
+   DETAIL GRID
+========================= */
 
 .detail-grid {
 
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 12px;
+
   margin-bottom: 20px;
 
 }
@@ -159,32 +282,46 @@ button:hover {
 .detail-card {
 
   background: #1f2937;
+
   border-radius: 12px;
-  padding: 14px;
+
+  padding: 16px;
 
 }
 
 .detail-card-label {
 
   font-size: 13px;
+
   color: #9ca3af;
-  margin-bottom: 6px;
+
+  margin-bottom: 8px;
 
 }
 
 .detail-card-value {
 
-  font-size: 20px;
+  font-size: 18px;
+
   font-weight: bold;
 
 }
 
+/* =========================
+   COMMENTS
+========================= */
+
 .comment-box {
 
   background: #1f2937;
+
   border-radius: 12px;
-  padding: 16px;
-  line-height: 1.5;
+
+  padding: 18px;
+
+  line-height: 1.6;
+
+  margin-bottom: 20px;
 
 }
 
@@ -193,7 +330,7 @@ button:hover {
 }
 
 /* =========================
-   PHOTO GALLERY
+   PHOTOS
 ========================= */
 
 .photo-gallery {
@@ -201,28 +338,99 @@ button:hover {
 }
 
 .photo-gallery h3 {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .photo-grid {
 
   display: grid;
+
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+
+  gap: 12px;
 
 }
 
 .photo-grid img {
 
   width: 100%;
-  border-radius: 10px;
+
+  border-radius: 12px;
+
   cursor: pointer;
+
   transition: transform 0.2s ease;
 
 }
 
 .photo-grid img:hover {
   transform: scale(1.03);
+}
+
+/* =========================
+   LOADING SCREEN
+========================= */
+
+#loadingScreen {
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: rgba(17,24,39,0.95);
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+}
+
+#loadingScreen.hidden {
+  display: none;
+}
+
+.spinner {
+
+  width: 70px;
+  height: 70px;
+
+  border: 8px solid #374151;
+
+  border-top: 8px solid #2563eb;
+
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+
+}
+
+.loading-text {
+
+  margin-top: 20px;
+
+  font-size: 18px;
+
+}
+
+@keyframes spin {
+
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+
 }
 
 /* =========================
@@ -238,24 +446,32 @@ button:hover {
   #sidebar {
 
     width: 100%;
+
+    height: auto;
+
     border-right: none;
-    border-bottom: 2px solid #374151;
+
+    border-bottom: 2px solid #1f2937;
 
   }
 
   #map {
-    height: calc(100vh - 320px);
+    height: calc(100vh - 450px);
   }
 
   #detailsPanel {
 
     position: fixed;
+
     bottom: 0;
     left: 0;
+
     width: 100%;
-    height: 45%;
+    height: 50%;
+
     border-left: none;
-    border-top: 2px solid #374151;
+
+    border-top: 2px solid #1f2937;
 
   }
 
