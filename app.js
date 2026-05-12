@@ -36,7 +36,7 @@ L.control.layers(baseMaps).addTo(map);
 let tornadoLayer;
 
 // ======================
-// STATE LIST
+// STATES
 // ======================
 
 const states = [
@@ -47,20 +47,28 @@ const states = [
   "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
 ];
 
-const stateSelect = document.getElementById("stateFilter");
+const stateSelect =
+  document.getElementById("stateFilter");
 
 states.forEach(state => {
-  const option = document.createElement("option");
+
+  const option =
+    document.createElement("option");
+
   option.value = state;
   option.textContent = state;
+
   stateSelect.appendChild(option);
+
 });
 
 // ======================
-// EF FILTER DROPDOWN
+// EF FILTER
 // ======================
 
-const efFilter = document.createElement("select");
+const efFilter =
+  document.createElement("select");
+
 efFilter.id = "efFilter";
 
 [
@@ -74,14 +82,18 @@ efFilter.id = "efFilter";
   "EF5"
 ].forEach(rating => {
 
-  const option = document.createElement("option");
+  const option =
+    document.createElement("option");
 
   option.value = rating;
 
   option.textContent =
-    rating === "" ? "All Ratings" : rating;
+    rating === ""
+      ? "All Ratings"
+      : rating;
 
   efFilter.appendChild(option);
+
 });
 
 document
@@ -92,13 +104,38 @@ document
   );
 
 // ======================
-// GET COLOR BY EF
+// EF COLORS
 // ======================
 
 function getEFColor(rating) {
 
+  switch (rating) {
+
+    case "EF0":
+      return "#22c55e";
+
+    case "EF1":
+      return "#eab308";
+
+    case "EF2":
+      return "#f97316";
+
+    case "EF3":
+      return "#ef4444";
+
+    case "EF4":
+      return "#d946ef";
+
+    case "EF5":
+      return "#7e22ce";
+
+    default:
+      return "#9ca3af";
+  }
+}
+
 // ======================
-// LOAD NOAA PHOTOS
+// LOAD PHOTOS
 // ======================
 
 async function loadSurveyPhotos(objectId) {
@@ -118,6 +155,7 @@ async function loadSurveyPhotos(objectId) {
       !data.attachmentInfos ||
       data.attachmentInfos.length === 0
     ) {
+
       return `
         <p>No survey photos available.</p>
       `;
@@ -125,6 +163,7 @@ async function loadSurveyPhotos(objectId) {
 
     let html = `
       <div class="photo-gallery">
+
         <h3>Survey Photos</h3>
 
         <div class="photo-grid">
@@ -171,217 +210,179 @@ async function loadTornadoData() {
 
   try {
 
-    // ======================
-    // GET FILTER VALUES
-    // ======================
-
-    const startDate =
-      document.getElementById("startDate").value;
-
-    const endDate =
-      document.getElementById("endDate").value;
-
     const state =
       document.getElementById("stateFilter").value;
 
     const ef =
       document.getElementById("efFilter").value;
 
-    // ======================
-    // BUILD WHERE CLAUSE
-    // ======================
-
     let where = "1=1";
 
-    // State filter
     if (state) {
-      where += ` AND STATE = '${state}'`;
+      where += ` AND STATE='${state}'`;
     }
 
-    // EF filter
     if (ef) {
-      where += ` AND RATING = '${ef}'`;
+      where += ` AND RATING='${ef}'`;
     }
-
-    // Date filter
-    if (startDate && endDate) {
-
-      const startMillis =
-        new Date(startDate).getTime();
-
-      const endMillis =
-        new Date(endDate).getTime();
-
-      where += `
-        AND BEGIN_DATE >= DATE '${startDate}'
-        AND BEGIN_DATE <= DATE '${endDate}'
-      `;
-    }
-
-    // ======================
-    // NOAA DAT URL
-    // ======================
 
     const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?` +
-      `where=${encodeURIComponent(where)}` +
-      `&outFields=*` +
-      `&f=geojson`;
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=*&f=geojson`;
 
-    console.log(url);
+    const response =
+      await fetch(url);
 
-    // ======================
-    // FETCH DATA
-    // ======================
-
-    const response = await fetch(url);
-
-    const data = await response.json();
-
-    // ======================
-    // REMOVE OLD LAYER
-    // ======================
+    const data =
+      await response.json();
 
     if (tornadoLayer) {
       map.removeLayer(tornadoLayer);
     }
 
-    // ======================
-    // CREATE NEW LAYER
-    // ======================
-
     tornadoLayer = L.geoJSON(data, {
 
       style: function(feature) {
 
-        const rating =
-          feature.properties.RATING;
-
         return {
-          color: getEFColor(rating),
+
+          color: getEFColor(
+            feature.properties.RATING
+          ),
+
           weight: 3
+
         };
       },
 
-      onEachFeature: function(feature, layer) {
+      onEachFeature:
+        function(feature, layer) {
 
-        const props = feature.properties;
+        const props =
+          feature.properties;
 
-        // ======================
-// CLICK EVENT
-// ======================
+        layer.on(
+          "click",
+          async () => {
 
-layer.on("click", async () => {
+            const panel =
+              document.getElementById(
+                "detailsPanel"
+              );
 
-  const panel =
-    document.getElementById("detailsPanel");
+            const content =
+              document.getElementById(
+                "detailsContent"
+              );
 
-  const content =
-    document.getElementById("detailsContent");
+            panel.classList.remove(
+              "hidden"
+            );
 
-  panel.classList.remove("hidden");
-  
-const photoHtml =
-  await loadSurveyPhotos(
-    props.OBJECTID
-  );
-  
-content.innerHTML = `
+            const photoHtml =
+              await loadSurveyPhotos(
+                props.OBJECTID
+              );
 
-  <div
-    class="detail-header"
-    style="
-      background:${getEFColor(props.RATING)};
-    "
-  >
-    <h2>
-      ${props.RATING || 'EFU'}
-    </h2>
+            content.innerHTML = `
 
-    <div>
-      ${props.EVENT_ID || 'Unknown Event'}
-    </div>
-  </div>
+              <div
+                class="detail-header"
+                style="
+                  background:
+                  ${getEFColor(props.RATING)};
+                "
+              >
 
-  <div class="detail-grid">
+                <h2>
+                  ${props.RATING || 'EFU'}
+                </h2>
 
-    <div class="detail-card">
-      <div class="detail-card-label">
-        State
-      </div>
+                <div>
+                  ${props.EVENT_ID || 'Unknown Event'}
+                </div>
 
-      <div class="detail-card-value">
-        ${props.STATE || 'N/A'}
-      </div>
-    </div>
+              </div>
 
-    <div class="detail-card">
-      <div class="detail-card-label">
-        Injuries
-      </div>
+              <div class="detail-grid">
 
-      <div class="detail-card-value">
-        ${props.INJURIES || 0}
-      </div>
-    </div>
+                <div class="detail-card">
 
-    <div class="detail-card">
-      <div class="detail-card-label">
-        Fatalities
-      </div>
+                  <div class="detail-card-label">
+                    State
+                  </div>
 
-      <div class="detail-card-value">
-        ${props.FATALITIES || 0}
-      </div>
-    </div>
+                  <div class="detail-card-value">
+                    ${props.STATE || 'N/A'}
+                  </div>
 
-    <div class="detail-card">
-      <div class="detail-card-label">
-        Begin Date
-      </div>
+                </div>
 
-      <div class="detail-card-value">
-        ${props.BEGIN_DATE || 'N/A'}
-      </div>
-    </div>
+                <div class="detail-card">
 
-  </div>
+                  <div class="detail-card-label">
+                    Injuries
+                  </div>
 
-  <div class="comment-box">
+                  <div class="detail-card-value">
+                    ${props.INJURIES || 0}
+                  </div>
 
-    <h3>Survey Comments</h3>
+                </div>
 
-    <p>
-      ${props.COMMENTS || 'No comments available.'}
-    </p>
+                <div class="detail-card">
 
-  </div>
-${photoHtml}
-`;
-});
+                  <div class="detail-card-label">
+                    Fatalities
+                  </div>
+
+                  <div class="detail-card-value">
+                    ${props.FATALITIES || 0}
+                  </div>
+
+                </div>
+
+                <div class="detail-card">
+
+                  <div class="detail-card-label">
+                    Comments
+                  </div>
+
+                  <div class="detail-card-value">
+                    ${props.COMMENTS || 'None'}
+                  </div>
+
+                </div>
+
+              </div>
+
+              ${photoHtml}
+
+            `;
+          }
+        );
       }
 
     }).addTo(map);
 
-    // ======================
-    // FIT MAP
-    // ======================
-
-    if (tornadoLayer.getBounds().isValid()) {
-      map.fitBounds(tornadoLayer.getBounds());
+    if (
+      tornadoLayer.getBounds().isValid()
+    ) {
+      map.fitBounds(
+        tornadoLayer.getBounds()
+      );
     }
 
   } catch (error) {
 
     console.error(
-      "Error loading NOAA DAT data:",
+      "Error loading tornado data:",
       error
     );
   }
 }
 
 // ======================
-// BUTTON EVENT
+// APPLY FILTERS
 // ======================
 
 document
@@ -392,20 +393,24 @@ document
   );
 
 // ======================
-// INITIAL LOAD
-// ======================
-
-loadTornadoData();
-// ======================
 // CLOSE PANEL
 // ======================
 
 document
   .getElementById("closePanel")
-  .addEventListener("click", () => {
+  .addEventListener(
+    "click",
+    () => {
 
-    document
-      .getElementById("detailsPanel")
-      .classList.add("hidden");
+      document
+        .getElementById("detailsPanel")
+        .classList.add("hidden");
 
-  });
+    }
+  );
+
+// ======================
+// INITIAL LOAD
+// ======================
+
+loadTornadoData();
