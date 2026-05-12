@@ -1,28 +1,38 @@
 html, body {
+
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: Arial, sans-serif;
   background: #111827;
   color: white;
+
 }
 
 body {
   display: flex;
 }
 
+/* =========================
+   SIDEBAR
+========================= */
+
 #sidebar {
+
   width: 320px;
   background: #1f2937;
   padding: 20px;
   box-sizing: border-box;
   overflow-y: auto;
   border-right: 2px solid #374151;
+
 }
 
 #sidebar h1 {
+
   margin-top: 0;
   font-size: 24px;
+
 }
 
 .filter-group {
@@ -30,21 +40,27 @@ body {
 }
 
 .filter-group label {
+
   display: block;
   margin-bottom: 6px;
+
 }
 
 .filter-group input,
 .filter-group select {
+
   width: 100%;
   padding: 10px;
   border: none;
   border-radius: 8px;
   background: #374151;
   color: white;
+  box-sizing: border-box;
+
 }
 
 button {
+
   width: 100%;
   padding: 12px;
   background: #2563eb;
@@ -53,44 +69,37 @@ button {
   color: white;
   font-size: 16px;
   cursor: pointer;
+
 }
 
 button:hover {
   background: #1d4ed8;
 }
 
+/* =========================
+   MAP
+========================= */
+
 #map {
+
   flex: 1;
   height: 100vh;
+
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-
-  #sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #374151;
-  }
-
-  #map {
-    height: calc(100vh - 320px);
-  }
-}
 /* =========================
    DETAILS PANEL
 ========================= */
 
 #detailsPanel {
+
   width: 360px;
   background: #111827;
   border-left: 2px solid #374151;
   overflow-y: auto;
   transition: transform 0.3s ease;
   z-index: 1000;
+
 }
 
 #detailsPanel.hidden {
@@ -101,11 +110,8 @@ button:hover {
   padding: 20px;
 }
 
-#detailsContent h2 {
-  margin-top: 0;
-}
-
 #closePanel {
+
   width: 100%;
   background: #1f2937;
   border: none;
@@ -114,6 +120,7 @@ button:hover {
   font-size: 18px;
   cursor: pointer;
   border-bottom: 1px solid #374151;
+
 }
 
 #closePanel:hover {
@@ -121,88 +128,70 @@ button:hover {
 }
 
 /* =========================
-   MOBILE PANEL
-========================= */
-
-@media (max-width: 768px) {
-
-  #detailsPanel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 45%;
-    border-left: none;
-    border-top: 2px solid #374151;
-  }
-
-  #detailsPanel.hidden {
-    transform: translateY(100%);
-  }
-}
-/* =========================
-   SURVEY DETAIL CARDS
+   DETAIL CARDS
 ========================= */
 
 .detail-header {
+
   padding: 18px;
   border-radius: 12px;
   margin-bottom: 18px;
   color: white;
+
 }
 
 .detail-header h2 {
+
   margin: 0;
   font-size: 28px;
+
 }
 
 .detail-grid {
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 20px;
+
 }
 
 .detail-card {
+
   background: #1f2937;
   border-radius: 12px;
   padding: 14px;
+
 }
 
 .detail-card-label {
+
   font-size: 13px;
   color: #9ca3af;
   margin-bottom: 6px;
+
 }
 
 .detail-card-value {
+
   font-size: 20px;
   font-weight: bold;
+
 }
 
 .comment-box {
+
   background: #1f2937;
   border-radius: 12px;
   padding: 16px;
   line-height: 1.5;
+
 }
 
 .comment-box h3 {
   margin-top: 0;
 }
 
-/* MOBILE */
-
-@media (max-width: 768px) {
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-header h2 {
-    font-size: 22px;
-  }
-}
 /* =========================
    PHOTO GALLERY
 ========================= */
@@ -216,25 +205,67 @@ button:hover {
 }
 
 .photo-grid {
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+
 }
 
 .photo-grid img {
+
   width: 100%;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s ease;
+
 }
 
 .photo-grid img:hover {
   transform: scale(1.03);
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 768px) {
+
+  body {
+    flex-direction: column;
+  }
+
+  #sidebar {
+
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #374151;
+
+  }
+
+  #map {
+    height: calc(100vh - 320px);
+  }
+
+  #detailsPanel {
+
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45%;
+    border-left: none;
+    border-top: 2px solid #374151;
+
+  }
+
+  #detailsPanel.hidden {
+    transform: translateY(100%);
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
 
   .photo-grid {
     grid-template-columns: 1fr;
