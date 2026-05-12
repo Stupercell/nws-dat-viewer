@@ -1,40 +1,71 @@
 // ======================
+// LOADING SCREEN
+// ======================
+
+function showLoading() {
+
+  document
+    .getElementById("loadingScreen")
+    .classList.remove("hidden");
+
+}
+
+function hideLoading() {
+
+  document
+    .getElementById("loadingScreen")
+    .classList.add("hidden");
+
+}
+
+// ======================
 // CREATE MAP
 // ======================
 
-const map = L.map('map').setView([39.5, -98.35], 4);
+const map =
+  L.map('map').setView(
+    [39.5, -98.35],
+    4
+  );
 
 // ======================
 // BASEMAPS
 // ======================
 
-const darkMap = L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-  }
-).addTo(map);
+const darkMap =
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    {
+      attribution:
+        '&copy; OpenStreetMap contributors &copy; CARTO'
+    }
+  ).addTo(map);
 
-const satelliteMap = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
-    attribution: 'Tiles &copy; Esri'
-  }
-);
+const satelliteMap =
+  L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Tiles &copy; Esri'
+    }
+  );
 
-const lightMap = L.tileLayer(
-  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-  }
-);
+const lightMap =
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    {
+      attribution:
+        '&copy; OpenStreetMap contributors &copy; CARTO'
+    }
+  );
 
-const terrainMap = L.tileLayer(
-  'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; OpenTopoMap contributors'
-  }
-);
+const terrainMap =
+  L.tileLayer(
+    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    {
+      attribution:
+        '&copy; OpenTopoMap contributors'
+    }
+  );
 
 const baseMaps = {
   "Dark": darkMap,
@@ -44,7 +75,7 @@ const baseMaps = {
 };
 
 // ======================
-// OVERLAY CONTROL
+// OVERLAYS
 // ======================
 
 const overlayMaps = {};
@@ -56,11 +87,12 @@ const layerControl =
   ).addTo(map);
 
 // ======================
-// GLOBAL LAYERS
+// LAYERS
 // ======================
 
 let tornadoLayer;
 let damagePointLayer;
+let polygonLayer;
 
 // ======================
 // STATES
@@ -75,17 +107,23 @@ const states = [
 ];
 
 const stateSelect =
-  document.getElementById("stateFilter");
+  document.getElementById(
+    "stateFilter"
+  );
 
 states.forEach(state => {
 
   const option =
-    document.createElement("option");
+    document.createElement(
+      "option"
+    );
 
   option.value = state;
   option.textContent = state;
 
-  stateSelect.appendChild(option);
+  stateSelect.appendChild(
+    option
+  );
 
 });
 
@@ -96,7 +134,8 @@ states.forEach(state => {
 const efWrapper =
   document.createElement("div");
 
-efWrapper.className = "filter-group";
+efWrapper.className =
+  "filter-group";
 
 const efLabel =
   document.createElement("label");
@@ -121,7 +160,9 @@ efFilter.id = "efFilter";
 ].forEach(rating => {
 
   const option =
-    document.createElement("option");
+    document.createElement(
+      "option"
+    );
 
   option.value = rating;
 
@@ -130,18 +171,27 @@ efFilter.id = "efFilter";
       ? "All Ratings"
       : rating;
 
-  efFilter.appendChild(option);
+  efFilter.appendChild(
+    option
+  );
 
 });
 
-efWrapper.appendChild(efLabel);
-efWrapper.appendChild(efFilter);
+efWrapper.appendChild(
+  efLabel
+);
+
+efWrapper.appendChild(
+  efFilter
+);
 
 document
   .getElementById("sidebar")
   .insertBefore(
     efWrapper,
-    document.getElementById("applyFilters")
+    document.getElementById(
+      "applyFilters"
+    )
   );
 
 // ======================
@@ -153,22 +203,22 @@ function getEFColor(rating) {
   switch (rating) {
 
     case "EF0":
-      return "#22c55e";
+      return "#00ff00";
 
     case "EF1":
-      return "#eab308";
+      return "#ffff00";
 
     case "EF2":
-      return "#f97316";
+      return "#ff9900";
 
     case "EF3":
-      return "#ef4444";
+      return "#ff0000";
 
     case "EF4":
-      return "#d946ef";
+      return "#ff00ff";
 
     case "EF5":
-      return "#7e22ce";
+      return "#800080";
 
     default:
       return "#9ca3af";
@@ -176,21 +226,63 @@ function getEFColor(rating) {
 }
 
 // ======================
-// FORMAT DATE
+// LIGHTBOX
 // ======================
 
-function formatDate(dateValue) {
+function openLightbox(imageUrl) {
 
-  if (!dateValue) {
+  const lightbox =
+    document.getElementById(
+      "lightbox"
+    );
+
+  const image =
+    document.getElementById(
+      "lightboxImage"
+    );
+
+  image.src = imageUrl;
+
+  lightbox.classList.remove(
+    "hidden"
+  );
+
+}
+
+document
+  .getElementById(
+    "closeLightbox"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      document
+        .getElementById(
+          "lightbox"
+        )
+        .classList.add(
+          "hidden"
+        );
+
+    }
+  );
+
+// ======================
+// DATE FORMAT
+// ======================
+
+function formatDate(value) {
+
+  if (!value) {
     return "N/A";
   }
 
   try {
 
-    const date =
-      new Date(dateValue);
-
-    return date.toLocaleString();
+    return new Date(
+      value
+    ).toLocaleString();
 
   } catch {
 
@@ -200,10 +292,12 @@ function formatDate(dateValue) {
 }
 
 // ======================
-// LOAD SURVEY PHOTOS
+// SURVEY PHOTOS
 // ======================
 
-async function loadSurveyPhotos(objectId) {
+async function loadSurveyPhotos(
+  objectId
+) {
 
   try {
 
@@ -211,7 +305,9 @@ async function loadSurveyPhotos(objectId) {
       `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments?f=json`;
 
     const response =
-      await fetch(attachmentUrl);
+      await fetch(
+        attachmentUrl
+      );
 
     const data =
       await response.json();
@@ -234,19 +330,20 @@ async function loadSurveyPhotos(objectId) {
         <div class="photo-grid">
     `;
 
-    data.attachmentInfos.forEach(photo => {
+    data.attachmentInfos.forEach(
+      photo => {
 
-      const imageUrl =
-        `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments/${photo.id}`;
+        const imageUrl =
+          `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments/${photo.id}`;
 
-      html += `
-        <img
-          src="${imageUrl}"
-          alt="Survey Photo"
-          onclick="window.open('${imageUrl}')"
-        >
-      `;
-    });
+        html += `
+          <img
+            src="${imageUrl}"
+            onclick="openLightbox('${imageUrl}')"
+          >
+        `;
+      }
+    );
 
     html += `
         </div>
@@ -255,12 +352,7 @@ async function loadSurveyPhotos(objectId) {
 
     return html;
 
-  } catch (error) {
-
-    console.error(
-      "Error loading survey photos:",
-      error
-    );
+  } catch {
 
     return `
       <p>Error loading photos.</p>
@@ -269,10 +361,74 @@ async function loadSurveyPhotos(objectId) {
 }
 
 // ======================
-// TORNADO DETAILS PANEL
+// STATS
 // ======================
 
-async function showTornadoDetails(props) {
+function updateStats(features) {
+
+  document
+    .getElementById(
+      "statTotal"
+    )
+    .textContent =
+      features.length;
+
+  const ratings =
+    features.map(
+      f => f.properties.RATING
+    );
+
+  const order =
+    [
+      "EFU",
+      "EF0",
+      "EF1",
+      "EF2",
+      "EF3",
+      "EF4",
+      "EF5"
+    ];
+
+  let strongest = "N/A";
+
+  order.forEach(r => {
+
+    if (ratings.includes(r)) {
+      strongest = r;
+    }
+
+  });
+
+  document
+    .getElementById(
+      "statStrongest"
+    )
+    .textContent =
+      strongest;
+
+  const states =
+    new Set(
+      features.map(
+        f => f.properties.STATE
+      )
+    );
+
+  document
+    .getElementById(
+      "statStates"
+    )
+    .textContent =
+      states.size;
+
+}
+
+// ======================
+// DETAILS PANEL
+// ======================
+
+async function showTornadoDetails(
+  props
+) {
 
   const panel =
     document.getElementById(
@@ -378,13 +534,16 @@ async function showTornadoDetails(props) {
     ${photoHtml}
 
   `;
+
 }
 
 // ======================
-// DAMAGE POINT DETAILS
+// DAMAGE DETAILS
 // ======================
 
-function showDamagePointDetails(props) {
+function showDamagePointDetails(
+  props
+) {
 
   const panel =
     document.getElementById(
@@ -445,65 +604,101 @@ function showDamagePointDetails(props) {
 
       </div>
 
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Estimated Wind
-        </div>
-
-        <div class="detail-card-value">
-          ${props.ESTIMATED_WIND || 'N/A'}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          State
-        </div>
-
-        <div class="detail-card-value">
-          ${props.STATE || 'N/A'}
-        </div>
-
-      </div>
-
     </div>
 
   `;
+
 }
 
 // ======================
-// LOAD TORNADO DATA
+// LOAD TORNADOES
 // ======================
 
 async function loadTornadoData() {
 
+  showLoading();
+
   try {
 
     const state =
-      document.getElementById(
-        "stateFilter"
-      ).value;
+      document
+        .getElementById(
+          "stateFilter"
+        )
+        .value;
 
     const ef =
-      document.getElementById(
-        "efFilter"
-      ).value;
+      document
+        .getElementById(
+          "efFilter"
+        )
+        .value;
+
+    const search =
+      document
+        .getElementById(
+          "searchInput"
+        )
+        .value
+        .trim();
+
+    const startDate =
+      document
+        .getElementById(
+          "startDate"
+        )
+        .value;
+
+    const endDate =
+      document
+        .getElementById(
+          "endDate"
+        )
+        .value;
 
     let where = "1=1";
 
     if (state) {
-      where += ` AND STATE='${state}'`;
+      where += `
+        AND STATE='${state}'
+      `;
     }
 
     if (ef) {
-      where += ` AND RATING='${ef}'`;
+      where += `
+        AND RATING='${ef}'
+      `;
     }
 
+    if (search) {
+
+      where += `
+        AND (
+          EVENT_ID LIKE '%${search}%'
+          OR COMMENTS LIKE '%${search}%'
+        )
+      `;
+    }
+
+    if (
+      startDate &&
+      endDate
+    ) {
+
+      where += `
+        AND BEGIN_DATE >= DATE '${startDate}'
+        AND BEGIN_DATE <= DATE '${endDate}'
+      `;
+    }
+
+    const bounds =
+      map.getBounds();
+
+    const geometry =
+      `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+
     const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=*&f=geojson`;
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&geometry=${geometry}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outFields=*&f=geojson`;
 
     const response =
       await fetch(url);
@@ -522,38 +717,67 @@ async function loadTornadoData() {
     tornadoLayer =
       L.geoJSON(data, {
 
-        style: function(feature) {
+        style: feature => ({
 
-          return {
-
-            color: getEFColor(
+          color:
+            getEFColor(
               feature.properties.RATING
             ),
 
-            weight: 3
+          weight: 3,
 
-          };
-        },
+          opacity: 0.9
+
+        }),
 
         onEachFeature:
-          function(feature, layer) {
+          (feature, layer) => {
 
-          layer.on(
-            "click",
-            async () => {
+            layer.on(
+              "mouseover",
+              () => {
 
-              await showTornadoDetails(
-                feature.properties
-              );
+                layer.setStyle({
+                  weight: 5
+                });
 
-            }
-          );
-        }
+              }
+            );
+
+            layer.on(
+              "mouseout",
+              () => {
+
+                layer.setStyle({
+                  weight: 3
+                });
+
+              }
+            );
+
+            layer.on(
+              "click",
+              async () => {
+
+                await showTornadoDetails(
+                  feature.properties
+                );
+
+              }
+            );
+
+          }
 
       }).addTo(map);
 
+    updateStats(
+      data.features
+    );
+
     if (
-      !overlayMaps["Tornado Paths"]
+      !overlayMaps[
+        "Tornado Paths"
+      ]
     ) {
 
       overlayMaps[
@@ -564,29 +788,21 @@ async function loadTornadoData() {
         tornadoLayer,
         "Tornado Paths"
       );
-    }
-
-    if (
-      tornadoLayer.getBounds().isValid()
-    ) {
-
-      map.fitBounds(
-        tornadoLayer.getBounds()
-      );
 
     }
 
   } catch (error) {
 
-    console.error(
-      "Error loading tornado data:",
-      error
-    );
+    console.error(error);
+
   }
+
+  hideLoading();
+
 }
 
 // ======================
-// LOAD DAMAGE POINTS
+// DAMAGE POINTS
 // ======================
 
 async function loadDamagePoints() {
@@ -614,40 +830,43 @@ async function loadDamagePoints() {
       L.geoJSON(data, {
 
         pointToLayer:
-          function(feature, latlng) {
+          (feature, latlng) => {
 
-          return L.circleMarker(
-            latlng,
-            {
-              radius: 5,
-              fillColor: "#38bdf8",
-              color: "#ffffff",
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.9
-            }
-          );
-        },
+            return L.circleMarker(
+              latlng,
+              {
+                radius: 5,
+                fillColor: "#00ffff",
+                color: "#ffffff",
+                weight: 1,
+                fillOpacity: 0.9
+              }
+            );
+
+          },
 
         onEachFeature:
-          function(feature, layer) {
+          (feature, layer) => {
 
-          layer.on(
-            "click",
-            () => {
+            layer.on(
+              "click",
+              () => {
 
-              showDamagePointDetails(
-                feature.properties
-              );
+                showDamagePointDetails(
+                  feature.properties
+                );
 
-            }
-          );
-        }
+              }
+            );
+
+          }
 
       }).addTo(map);
 
     if (
-      !overlayMaps["Damage Points"]
+      !overlayMaps[
+        "Damage Points"
+      ]
     ) {
 
       overlayMaps[
@@ -658,14 +877,13 @@ async function loadDamagePoints() {
         damagePointLayer,
         "Damage Points"
       );
+
     }
 
   } catch (error) {
 
-    console.error(
-      "Error loading damage points:",
-      error
-    );
+    console.error(error);
+
   }
 }
 
@@ -680,6 +898,81 @@ document
   .addEventListener(
     "click",
     loadTornadoData
+  );
+
+// ======================
+// QUICK FILTERS
+// ======================
+
+document
+  .querySelectorAll(
+    ".quickFilterBtn"
+  )
+  .forEach(btn => {
+
+    btn.addEventListener(
+      "click",
+      () => {
+
+        const days =
+          parseInt(
+            btn.dataset.days
+          );
+
+        const end =
+          new Date();
+
+        const start =
+          new Date();
+
+        start.setDate(
+          end.getDate() - days
+        );
+
+        document
+          .getElementById(
+            "startDate"
+          )
+          .value =
+            start
+              .toISOString()
+              .split("T")[0];
+
+        document
+          .getElementById(
+            "endDate"
+          )
+          .value =
+            end
+              .toISOString()
+              .split("T")[0];
+
+      }
+    );
+
+  });
+
+// ======================
+// MOBILE SIDEBAR
+// ======================
+
+document
+  .getElementById(
+    "mobileFilterToggle"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      document
+        .getElementById(
+          "sidebar"
+        )
+        .classList.toggle(
+          "mobile-open"
+        );
+
+    }
   );
 
 // ======================
@@ -704,6 +997,19 @@ document
 
     }
   );
+
+// ======================
+// RELOAD ON MAP MOVE
+// ======================
+
+map.on(
+  "moveend",
+  () => {
+
+    loadTornadoData();
+
+  }
+);
 
 // ======================
 // INITIAL LOAD
