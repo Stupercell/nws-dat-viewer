@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>NWS DAT Viewer</title>
 
@@ -13,49 +18,88 @@
   />
 
   <!-- Your CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
 </head>
 
 <body>
 
+  <!-- SIDEBAR -->
   <div id="sidebar">
+
     <h1>NWS DAT Viewer</h1>
 
     <div class="filter-group">
+
       <label>Start Date</label>
-      <input type="date" id="startDate">
+
+      <input
+        type="date"
+        id="startDate"
+      >
+
     </div>
 
     <div class="filter-group">
+
       <label>End Date</label>
-      <input type="date" id="endDate">
+
+      <input
+        type="date"
+        id="endDate"
+      >
+
     </div>
 
     <div class="filter-group">
+
       <label>State</label>
+
       <select id="stateFilter">
-        <option value="">All States</option>
+
+        <option value="">
+          All States
+        </option>
+
       </select>
+
     </div>
 
-    <button id="applyFilters">Apply Filters</button>
+    <button id="applyFilters">
+      Apply Filters
+    </button>
+
   </div>
 
+  <!-- MAP -->
   <div id="map"></div>
 
-<div id="detailsPanel" class="hidden">
-  <button id="closePanel">✕</button>
+  <!-- DETAILS PANEL -->
+  <div id="detailsPanel" class="hidden">
 
-  <div id="detailsContent">
-    <h2>Select a tornado</h2>
-    <p>Click a tornado path to view details.</p>
+    <button id="closePanel">
+      ✕
+    </button>
+
+    <div id="detailsContent">
+
+      <h2>Select a tornado</h2>
+
+      <p>
+        Click a tornado path to view details.
+      </p>
+
+    </div>
+
   </div>
-</div>
 
-  <!-- Leaflet JS -->
+  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- Your JS -->
+  <!-- YOUR JS -->
   <script src="app.js"></script>
 
 </body>
