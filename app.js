@@ -23,7 +23,7 @@ function hideLoading() {
 // ======================
 
 const map =
-  L.map('map').setView(
+  L.map("map").setView(
     [39.5, -98.35],
     4
   );
@@ -34,36 +34,37 @@ const map =
 
 const darkMap =
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
     {
       attribution:
-        '&copy; OpenStreetMap contributors &copy; CARTO'
+        "&copy; OpenStreetMap contributors &copy; CARTO"
     }
   ).addTo(map);
 
 const satelliteMap =
   L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
-      attribution: 'Tiles &copy; Esri'
+      attribution:
+        "Tiles &copy; Esri"
     }
   );
 
 const lightMap =
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
       attribution:
-        '&copy; OpenStreetMap contributors &copy; CARTO'
+        "&copy; OpenStreetMap contributors &copy; CARTO"
     }
   );
 
 const terrainMap =
   L.tileLayer(
-    'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
     {
       attribution:
-        '&copy; OpenTopoMap contributors'
+        "&copy; OpenTopoMap contributors"
     }
   );
 
@@ -87,7 +88,7 @@ const layerControl =
   ).addTo(map);
 
 // ======================
-// LAYERS
+// GLOBAL LAYERS
 // ======================
 
 let tornadoLayer;
@@ -155,6 +156,7 @@ efFilter.id = "efFilter";
   "EF1",
   "EF2",
   "EF3",
+  "EF3+",
   "EF4",
   "EF5"
 ].forEach(rating => {
@@ -195,7 +197,7 @@ document
   );
 
 // ======================
-// EF COLORS
+// DAT COLORS
 // ======================
 
 function getEFColor(rating) {
@@ -203,25 +205,31 @@ function getEFColor(rating) {
   switch (rating) {
 
     case "EF0":
-      return "#00ff00";
+      return "#00d5ff";
 
     case "EF1":
-      return "#ffff00";
+      return "#37ff00";
 
     case "EF2":
-      return "#ff9900";
+      return "#fff000";
 
     case "EF3":
-      return "#ff0000";
+      return "#ff9900";
+
+    case "EF3+":
+      return "#ff9900";
 
     case "EF4":
-      return "#ff00ff";
+      return "#ff0000";
 
     case "EF5":
-      return "#800080";
+      return "#b000b0";
+
+    case "EFU":
+      return "#9e9e9e";
 
     default:
-      return "#9ca3af";
+      return "#9e9e9e";
   }
 }
 
@@ -292,7 +300,7 @@ function formatDate(value) {
 }
 
 // ======================
-// SURVEY PHOTOS
+// LOAD PHOTOS
 // ======================
 
 async function loadSurveyPhotos(
@@ -385,6 +393,7 @@ function updateStats(features) {
       "EF1",
       "EF2",
       "EF3",
+      "EF3+",
       "EF4",
       "EF5"
     ];
@@ -421,9 +430,8 @@ function updateStats(features) {
       states.size;
 
 }
-
 // ======================
-// DETAILS PANEL
+// TORNADO DETAILS
 // ======================
 
 async function showTornadoDetails(
@@ -460,11 +468,11 @@ async function showTornadoDetails(
     >
 
       <h2>
-        ${props.RATING || 'EFU'}
+        ${props.RATING || "EFU"}
       </h2>
 
       <div>
-        ${props.EVENT_ID || 'Unknown Event'}
+        ${props.EVENT_ID || "Unknown Event"}
       </div>
 
     </div>
@@ -478,7 +486,19 @@ async function showTornadoDetails(
         </div>
 
         <div class="detail-card-value">
-          ${props.STATE || 'N/A'}
+          ${props.STATE || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          County
+        </div>
+
+        <div class="detail-card-value">
+          ${props.COUNTY || "N/A"}
         </div>
 
       </div>
@@ -510,11 +530,71 @@ async function showTornadoDetails(
       <div class="detail-card">
 
         <div class="detail-card-label">
+          Path Length
+        </div>
+
+        <div class="detail-card-value">
+          ${props.PATH_LENGTH || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Path Width
+        </div>
+
+        <div class="detail-card-value">
+          ${props.PATH_WIDTH || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Max Wind
+        </div>
+
+        <div class="detail-card-value">
+          ${props.MAX_WIND || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          WFO
+        </div>
+
+        <div class="detail-card-value">
+          ${props.WFO || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
           Begin Date
         </div>
 
         <div class="detail-card-value">
           ${formatDate(props.BEGIN_DATE)}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          End Date
+        </div>
+
+        <div class="detail-card-value">
+          ${formatDate(props.END_DATE)}
         </div>
 
       </div>
@@ -526,7 +606,7 @@ async function showTornadoDetails(
       <h3>Survey Comments</h3>
 
       <p>
-        ${props.COMMENTS || 'No comments available.'}
+        ${props.COMMENTS || "No comments available."}
       </p>
 
     </div>
@@ -538,7 +618,7 @@ async function showTornadoDetails(
 }
 
 // ======================
-// DAMAGE DETAILS
+// DAMAGE POINT DETAILS
 // ======================
 
 function showDamagePointDetails(
@@ -564,7 +644,7 @@ function showDamagePointDetails(
     <div
       class="detail-header"
       style="
-        background:#0284c7;
+        background:#00d5ff;
       "
     >
 
@@ -573,7 +653,7 @@ function showDamagePointDetails(
       </h2>
 
       <div>
-        ${props.DI || 'Unknown'}
+        ${props.DI || "Unknown"}
       </div>
 
     </div>
@@ -587,7 +667,7 @@ function showDamagePointDetails(
         </div>
 
         <div class="detail-card-value">
-          ${props.DI || 'N/A'}
+          ${props.DI || "N/A"}
         </div>
 
       </div>
@@ -599,7 +679,19 @@ function showDamagePointDetails(
         </div>
 
         <div class="detail-card-value">
-          ${props.DOD || 'N/A'}
+          ${props.DOD || "N/A"}
+        </div>
+
+      </div>
+
+      <div class="detail-card">
+
+        <div class="detail-card-label">
+          Estimated Wind
+        </div>
+
+        <div class="detail-card-value">
+          ${props.ESTIMATED_WIND || "N/A"}
         </div>
 
       </div>
@@ -611,7 +703,7 @@ function showDamagePointDetails(
 }
 
 // ======================
-// LOAD TORNADOES
+// LOAD TORNADO DATA
 // ======================
 
 async function loadTornadoData() {
@@ -659,12 +751,14 @@ async function loadTornadoData() {
     let where = "1=1";
 
     if (state) {
+
       where += `
         AND STATE='${state}'
       `;
     }
 
     if (ef) {
+
       where += `
         AND RATING='${ef}'
       `;
@@ -676,6 +770,10 @@ async function loadTornadoData() {
         AND (
           EVENT_ID LIKE '%${search}%'
           OR COMMENTS LIKE '%${search}%'
+          OR CITY LIKE '%${search}%'
+          OR COUNTY LIKE '%${search}%'
+          OR WFO LIKE '%${search}%'
+          OR STATE LIKE '%${search}%'
         )
       `;
     }
@@ -726,7 +824,7 @@ async function loadTornadoData() {
 
           weight: 3,
 
-          opacity: 0.9
+          opacity: 0.95
 
         }),
 
@@ -793,7 +891,9 @@ async function loadTornadoData() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
   }
 
@@ -802,7 +902,7 @@ async function loadTornadoData() {
 }
 
 // ======================
-// DAMAGE POINTS
+// LOAD DAMAGE POINTS
 // ======================
 
 async function loadDamagePoints() {
@@ -835,11 +935,18 @@ async function loadDamagePoints() {
             return L.circleMarker(
               latlng,
               {
-                radius: 5,
-                fillColor: "#00ffff",
+                radius: 6,
+
+                fillColor:
+                  getEFColor(
+                    feature.properties.RATING
+                  ),
+
                 color: "#ffffff",
+
                 weight: 1,
-                fillOpacity: 0.9
+
+                fillOpacity: 0.95
               }
             );
 
@@ -882,13 +989,137 @@ async function loadDamagePoints() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
   }
 }
 
 // ======================
-// FILTER BUTTON
+// LOAD DAMAGE POLYGONS
+// ======================
+
+async function loadDamagePolygons() {
+
+  try {
+
+    const url =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/2/query?where=1%3D1&outFields=*&f=geojson`;
+
+    const response =
+      await fetch(url);
+
+    const data =
+      await response.json();
+
+    if (polygonLayer) {
+
+      map.removeLayer(
+        polygonLayer
+      );
+
+    }
+
+    polygonLayer =
+      L.geoJSON(data, {
+
+        style: feature => ({
+
+          color:
+            getEFColor(
+              feature.properties.RATING
+            ),
+
+          fillColor:
+            getEFColor(
+              feature.properties.RATING
+            ),
+
+          weight: 2,
+
+          opacity: 0.9,
+
+          fillOpacity: 0.25
+
+        }),
+
+        onEachFeature:
+          (feature, layer) => {
+
+            layer.on(
+              "mouseover",
+              () => {
+
+                layer.setStyle({
+
+                  weight: 4,
+
+                  fillOpacity: 0.45
+
+                });
+
+              }
+            );
+
+            layer.on(
+              "mouseout",
+              () => {
+
+                layer.setStyle({
+
+                  weight: 2,
+
+                  fillOpacity: 0.25
+
+                });
+
+              }
+            );
+
+            layer.on(
+              "click",
+              async () => {
+
+                await showTornadoDetails(
+                  feature.properties
+                );
+
+              }
+            );
+
+          }
+
+      }).addTo(map);
+
+    if (
+      !overlayMaps[
+        "Damage Polygons"
+      ]
+    ) {
+
+      overlayMaps[
+        "Damage Polygons"
+      ] = polygonLayer;
+
+      layerControl.addOverlay(
+        polygonLayer,
+        "Damage Polygons"
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+  }
+}
+
+// ======================
+// APPLY FILTERS
 // ======================
 
 document
@@ -897,7 +1128,11 @@ document
   )
   .addEventListener(
     "click",
-    loadTornadoData
+    () => {
+
+      loadTornadoData();
+
+    }
   );
 
 // ======================
@@ -976,7 +1211,7 @@ document
   );
 
 // ======================
-// CLOSE PANEL
+// CLOSE DETAILS PANEL
 // ======================
 
 document
@@ -999,7 +1234,7 @@ document
   );
 
 // ======================
-// RELOAD ON MAP MOVE
+// MAP MOVE RELOAD
 // ======================
 
 map.on(
@@ -1016,4 +1251,7 @@ map.on(
 // ======================
 
 loadTornadoData();
+
 loadDamagePoints();
+
+loadDamagePolygons();
