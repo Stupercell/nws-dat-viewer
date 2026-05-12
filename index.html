@@ -1,71 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
 
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
-  />
+  >
 
-  <title>NWS DAT Viewer</title>
+  <title>NWS Damage Assessment Toolkit</title>
 
-  <!-- LEAFLET -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet/dist/leaflet.css"
-  />
+  >
 
-  <!-- YOUR CSS -->
   <link
     rel="stylesheet"
     href="style.css"
-  />
+  >
 
 </head>
 
 <body>
 
-  <!-- MOBILE FILTER BUTTON -->
-  <button id="mobileFilterToggle">
-    ☰ Filters
-  </button>
+  <!-- TOP BAR -->
+  <div id="topbar">
 
-  <!-- SIDEBAR -->
-  <div id="sidebar">
-
-    <!-- HEADER -->
-    <div class="sidebar-header">
-
-      <h1>NWS DAT Viewer</h1>
-
-      <p>
-        Modern NOAA Damage Assessment Toolkit Viewer
-      </p>
-
+    <div id="topbarTitle">
+      NWS Damage Assessment Toolkit
     </div>
 
-    <!-- SEARCH -->
-    <div class="filter-group">
+    <div id="topbarControls">
 
       <label>
-        Search
-      </label>
-
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="County, WFO, Event ID..."
-      >
-
-    </div>
-
-    <!-- DATE -->
-    <div class="filter-group">
-
-      <label>
-        Start Date
+        Begin Date:
       </label>
 
       <input
@@ -73,27 +44,14 @@
         id="startDate"
       >
 
-    </div>
-
-    <div class="filter-group">
-
       <label>
-        End Date
+        End Date:
       </label>
 
       <input
         type="date"
         id="endDate"
       >
-
-    </div>
-
-    <!-- STATE -->
-    <div class="filter-group">
-
-      <label>
-        State
-      </label>
 
       <select id="stateFilter">
 
@@ -103,164 +61,133 @@
 
       </select>
 
-    </div>
-
-    <!-- QUICK FILTERS -->
-    <div class="quick-filters">
-
-      <button
-        class="quickFilterBtn"
-        data-days="1"
-      >
-        Today
+      <button id="applyFilters">
+        Submit
       </button>
 
-      <button
-        class="quickFilterBtn"
-        data-days="7"
-      >
-        7 Days
-      </button>
-
-      <button
-        class="quickFilterBtn"
-        data-days="30"
-      >
-        30 Days
-      </button>
-
-      <button
-        class="quickFilterBtn"
-        data-days="365"
-      >
-        1 Year
+      <button id="resetFilters">
+        Reset
       </button>
 
     </div>
 
-    <!-- APPLY -->
-    <button id="applyFilters">
-      Apply Filters
-    </button>
+  </div>
 
-    <!-- STATS -->
-    <div id="statsPanel">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
 
-      <h3>Statistics</h3>
+    <div class="sidebarSection">
 
-      <div class="stat-row">
+      <div class="sidebarTitle">
+        Damage Viewer Layers
+      </div>
+
+      <div class="layerRow">
+
+        <input
+          type="checkbox"
+          id="toggleTracks"
+          checked
+        >
 
         <span>
-          Total Tornadoes
-        </span>
-
-        <span id="statTotal">
-          0
+          Damage Lines
         </span>
 
       </div>
 
-      <div class="stat-row">
+      <div class="layerRow">
+
+        <input
+          type="checkbox"
+          id="togglePoints"
+          checked
+        >
 
         <span>
-          Strongest Rating
-        </span>
-
-        <span id="statStrongest">
-          N/A
+          Damage Points
         </span>
 
       </div>
 
-      <div class="stat-row">
+      <div class="layerRow">
+
+        <input
+          type="checkbox"
+          id="togglePolygons"
+          checked
+        >
 
         <span>
-          Visible States
-        </span>
-
-        <span id="statStates">
-          0
+          Damage Polygons
         </span>
 
       </div>
 
     </div>
 
-    <!-- LEGEND -->
-    <div id="legend">
+    <div class="sidebarSection">
 
-      <h3>Tornado Ratings</h3>
-
-      <div class="legend-item">
-
-        <span class="legend-color ef0"></span>
-
-        EF0
-
+      <div class="sidebarTitle">
+        EF Scale
       </div>
 
-      <div class="legend-item">
-
-        <span class="legend-color ef1"></span>
-
-        EF1
-
-      </div>
-
-      <div class="legend-item">
-
-        <span class="legend-color ef2"></span>
-
-        EF2
-
-      </div>
-
-      <div class="legend-item">
-
-        <span class="legend-color ef3"></span>
-
-        EF3
-
-      </div>
-
-      <div class="legend-item">
-
-        <span class="legend-color ef4"></span>
-
-        EF4
-
-      </div>
-
-      <div class="legend-item">
-
-        <span class="legend-color ef5"></span>
-
+      <div class="efRow">
+        <span class="triangle ef5"></span>
         EF5
-
       </div>
 
-      <div class="legend-item">
+      <div class="efRow">
+        <span class="triangle ef4"></span>
+        EF4
+      </div>
 
-        <span
-          class="legend-color"
-          style="background:#9e9e9e;"
-        ></span>
+      <div class="efRow">
+        <span class="triangle ef3"></span>
+        EF3
+      </div>
 
+      <div class="efRow">
+        <span class="triangle ef2"></span>
+        EF2
+      </div>
+
+      <div class="efRow">
+        <span class="triangle ef1"></span>
+        EF1
+      </div>
+
+      <div class="efRow">
+        <span class="triangle ef0"></span>
+        EF0
+      </div>
+
+      <div class="efRow">
+        <span class="triangle efu"></span>
         EFU
-
       </div>
 
-      <hr style="
-        border-color:#374151;
-        margin:16px 0;
-      ">
+    </div>
 
-      <div class="legend-item">
+    <div class="sidebarSection">
 
-        <span class="legend-point"></span>
+      <div class="sidebarTitle">
+        Statistics
+      </div>
 
-        Damage Point
+      <div class="statRow">
+        <span>Tornado Count</span>
+        <span id="statTotal">0</span>
+      </div>
 
+      <div class="statRow">
+        <span>Strongest Rating</span>
+        <span id="statStrongest">N/A</span>
+      </div>
+
+      <div class="statRow">
+        <span>States Visible</span>
+        <span id="statStates">0</span>
       </div>
 
     </div>
@@ -270,37 +197,26 @@
   <!-- MAP -->
   <div id="map"></div>
 
-  <!-- DETAILS PANEL -->
+  <!-- DETAILS -->
   <div id="detailsPanel" class="hidden">
 
-    <button id="closePanel">
-      ✕
-    </button>
+    <div id="detailsHeader">
 
-    <div id="detailsContent">
+      <span>
+        Feature Details
+      </span>
 
-      <h2>Select a feature</h2>
-
-      <p>
-        Click a tornado path,
-        polygon, or damage point.
-      </p>
+      <button id="closePanel">
+        ✕
+      </button>
 
     </div>
 
-  </div>
+    <div id="detailsContent">
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox" class="hidden">
+      Select a feature.
 
-    <button id="closeLightbox">
-      ✕
-    </button>
-
-    <img
-      id="lightboxImage"
-      src=""
-    >
+    </div>
 
   </div>
 
@@ -309,17 +225,16 @@
 
     <div class="spinner"></div>
 
-    <div class="loading-text">
-      Loading NOAA DAT Data...
+    <div class="loadingText">
+      Loading DAT Data...
     </div>
 
   </div>
 
-  <!-- LEAFLET -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- YOUR JS -->
   <script src="app.js"></script>
 
 </body>
+
 </html>
