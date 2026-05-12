@@ -11,13 +11,13 @@
 
   <title>NWS DAT Viewer</title>
 
-  <!-- Leaflet CSS -->
+  <!-- LEAFLET -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet/dist/leaflet.css"
   />
 
-  <!-- Your CSS -->
+  <!-- YOUR CSS -->
   <link
     rel="stylesheet"
     href="style.css"
@@ -30,11 +30,23 @@
   <!-- SIDEBAR -->
   <div id="sidebar">
 
-    <h1>NWS DAT Viewer</h1>
+    <div class="sidebar-header">
+
+      <h1>NWS DAT Viewer</h1>
+
+      <p>
+        Modern NOAA Damage Assessment Toolkit Viewer
+      </p>
+
+    </div>
+
+    <!-- FILTERS -->
 
     <div class="filter-group">
 
-      <label>Start Date</label>
+      <label>
+        Start Date
+      </label>
 
       <input
         type="date"
@@ -45,7 +57,9 @@
 
     <div class="filter-group">
 
-      <label>End Date</label>
+      <label>
+        End Date
+      </label>
 
       <input
         type="date"
@@ -56,7 +70,9 @@
 
     <div class="filter-group">
 
-      <label>State</label>
+      <label>
+        State
+      </label>
 
       <select id="stateFilter">
 
@@ -71,6 +87,62 @@
     <button id="applyFilters">
       Apply Filters
     </button>
+
+    <!-- LEGEND -->
+
+    <div id="legend">
+
+      <h3>EF Scale</h3>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#22c55e;"
+        ></span>
+        EF0
+      </div>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#eab308;"
+        ></span>
+        EF1
+      </div>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#f97316;"
+        ></span>
+        EF2
+      </div>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#ef4444;"
+        ></span>
+        EF3
+      </div>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#d946ef;"
+        ></span>
+        EF4
+      </div>
+
+      <div class="legend-item">
+        <span
+          class="legend-color"
+          style="background:#7e22ce;"
+        ></span>
+        EF5
+      </div>
+
+    </div>
 
   </div>
 
@@ -89,9 +161,20 @@
       <h2>Select a tornado</h2>
 
       <p>
-        Click a tornado path to view details.
+        Click a tornado path or damage point to view details.
       </p>
 
+    </div>
+
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingScreen">
+
+    <div class="spinner"></div>
+
+    <div class="loading-text">
+      Loading NOAA DAT Data...
     </div>
 
   </div>
