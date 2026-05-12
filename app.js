@@ -1,7 +1,3 @@
-// ======================
-// LOADING
-// ======================
-
 function showLoading() {
 
   document
@@ -18,44 +14,25 @@ function hideLoading() {
 
 }
 
-// ======================
-// MAP
-// ======================
-
 const map =
-  L.map("map", {
-    zoomControl: true
-  }).setView(
+  L.map("map").setView(
     [39.5, -98.35],
     4
   );
 
-// ======================
-// BASEMAP
-// ======================
-
 L.tileLayer(
-  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+  "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
   {
     attribution:
       "Tiles © Esri"
   }
 ).addTo(map);
 
-// ======================
-// GLOBAL LAYERS
-// ======================
-
 let tornadoLayer;
 let damagePointLayer;
 let polygonLayer;
 
-// ======================
-// STATES
-// ======================
-
 const states = [
-
   "AL","AK","AZ","AR","CA","CO","CT","DE",
   "FL","GA","HI","ID","IL","IN","IA","KS",
   "KY","LA","ME","MD","MA","MI","MN","MS",
@@ -63,13 +40,7 @@ const states = [
   "NC","ND","OH","OK","OR","PA","RI","SC",
   "SD","TN","TX","UT","VT","VA","WA","WV",
   "WI","WY"
-
 ];
-
-const stateSelect =
-  document.getElementById(
-    "stateFilter"
-  );
 
 states.forEach(state => {
 
@@ -83,15 +54,13 @@ states.forEach(state => {
   option.textContent =
     state;
 
-  stateSelect.appendChild(
-    option
-  );
+  document
+    .getElementById(
+      "stateFilter"
+    )
+    .appendChild(option);
 
 });
-
-// ======================
-// DAT COLORS
-// ======================
 
 function getEFColor(rating) {
 
@@ -115,19 +84,12 @@ function getEFColor(rating) {
     case "EF5":
       return "#b000b0";
 
-    case "EFU":
-      return "#9e9e9e";
-
     default:
       return "#9e9e9e";
 
   }
 
 }
-
-// ======================
-// DATE FORMAT
-// ======================
 
 function formatDate(value) {
 
@@ -148,10 +110,6 @@ function formatDate(value) {
   }
 
 }
-
-// ======================
-// STATS
-// ======================
 
 function updateStats(features) {
 
@@ -179,13 +137,13 @@ function updateStats(features) {
 
   let strongest = "N/A";
 
-  order.forEach(rating => {
+  order.forEach(r => {
 
     if (
-      ratings.includes(rating)
+      ratings.includes(r)
     ) {
 
-      strongest = rating;
+      strongest = r;
 
     }
 
@@ -198,7 +156,7 @@ function updateStats(features) {
     .textContent =
       strongest;
 
-  const states =
+  const statesVisible =
     new Set(
       features.map(
         f => f.properties.STATE
@@ -210,172 +168,44 @@ function updateStats(features) {
       "statStates"
     )
     .textContent =
-      states.size;
+      statesVisible.size;
 
 }
 
-// ======================
-// TORNADO DETAILS
-// ======================
+function openDetails(props) {
 
-function showTornadoDetails(
-  props
-) {
-
-  const panel =
-    document.getElementById(
+  document
+    .getElementById(
       "detailsPanel"
+    )
+    .classList.remove(
+      "hidden"
     );
 
-  const content =
-    document.getElementById(
+  document
+    .getElementById(
       "detailsContent"
-    );
+    )
+    .innerHTML = `
 
-  panel.classList.remove(
-    "hidden"
-  );
+      <table class="datTable">
 
-  content.innerHTML = `
+        ${Object.entries(props)
+          .map(
+            ([key, value]) => `
+              <tr>
+                <td>${key}</td>
+                <td>${value ?? "N/A"}</td>
+              </tr>
+            `
+          )
+          .join("")}
 
-    <table class="dat-table">
+      </table>
 
-      <tr>
-        <td>event_id</td>
-        <td>${props.EVENT_ID || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>rating</td>
-        <td>${props.RATING || "EFU"}</td>
-      </tr>
-
-      <tr>
-        <td>state</td>
-        <td>${props.STATE || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>county</td>
-        <td>${props.COUNTY || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>wfo</td>
-        <td>${props.WFO || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>injuries</td>
-        <td>${props.INJURIES || 0}</td>
-      </tr>
-
-      <tr>
-        <td>fatalities</td>
-        <td>${props.FATALITIES || 0}</td>
-      </tr>
-
-      <tr>
-        <td>path_length</td>
-        <td>${props.PATH_LENGTH || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>path_width</td>
-        <td>${props.PATH_WIDTH || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>max_wind</td>
-        <td>${props.MAX_WIND || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>begin_date</td>
-        <td>${formatDate(props.BEGIN_DATE)}</td>
-      </tr>
-
-      <tr>
-        <td>end_date</td>
-        <td>${formatDate(props.END_DATE)}</td>
-      </tr>
-
-      <tr>
-        <td>comments</td>
-        <td>${props.COMMENTS || "None"}</td>
-      </tr>
-
-    </table>
-
-  `;
+    `;
 
 }
-
-// ======================
-// DAMAGE POINT DETAILS
-// ======================
-
-function showDamagePointDetails(
-  props
-) {
-
-  const panel =
-    document.getElementById(
-      "detailsPanel"
-    );
-
-  const content =
-    document.getElementById(
-      "detailsContent"
-    );
-
-  panel.classList.remove(
-    "hidden"
-  );
-
-  content.innerHTML = `
-
-    <table class="dat-table">
-
-      <tr>
-        <td>damage_indicator</td>
-        <td>${props.DI || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>dod</td>
-        <td>${props.DOD || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>rating</td>
-        <td>${props.RATING || "EFU"}</td>
-      </tr>
-
-      <tr>
-        <td>estimated_wind</td>
-        <td>${props.ESTIMATED_WIND || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>wfo</td>
-        <td>${props.WFO || "N/A"}</td>
-      </tr>
-
-      <tr>
-        <td>comments</td>
-        <td>${props.COMMENTS || "None"}</td>
-      </tr>
-
-    </table>
-
-  `;
-
-}
-
-// ======================
-// LOAD TORNADO DATA
-// ======================
 
 async function loadTornadoData() {
 
@@ -400,14 +230,8 @@ async function loadTornadoData() {
 
     }
 
-    const bounds =
-      map.getBounds();
-
-    const geometry =
-      `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
-
     const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&geometry=${geometry}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outFields=*&f=geojson`;
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=*&f=geojson`;
 
     const response =
       await fetch(url);
@@ -443,32 +267,10 @@ async function loadTornadoData() {
           (feature, layer) => {
 
             layer.on(
-              "mouseover",
-              () => {
-
-                layer.setStyle({
-                  weight: 5
-                });
-
-              }
-            );
-
-            layer.on(
-              "mouseout",
-              () => {
-
-                layer.setStyle({
-                  weight: 3
-                });
-
-              }
-            );
-
-            layer.on(
               "click",
               () => {
 
-                showTornadoDetails(
+                openDetails(
                   feature.properties
                 );
 
@@ -492,203 +294,134 @@ async function loadTornadoData() {
   hideLoading();
 
 }
-// ======================
-// LOAD DAMAGE POINTS
-// ======================
 
 async function loadDamagePoints() {
 
-  try {
+  const url =
+    `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/1/query?where=1%3D1&outFields=*&f=geojson`;
 
-    const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/1/query?where=1%3D1&outFields=*&f=geojson`;
+  const response =
+    await fetch(url);
 
-    const response =
-      await fetch(url);
+  const data =
+    await response.json();
 
-    const data =
-      await response.json();
+  if (damagePointLayer) {
 
-    if (damagePointLayer) {
-
-      map.removeLayer(
-        damagePointLayer
-      );
-
-    }
-
-    damagePointLayer =
-      L.geoJSON(data, {
-
-        pointToLayer:
-          (feature, latlng) => {
-
-            const color =
-              getEFColor(
-                feature.properties.RATING
-              );
-
-            return L.marker(
-              latlng,
-              {
-                icon: L.divIcon({
-
-                  className:
-                    "damage-point-icon",
-
-                  html: `
-                    <div
-                      style="
-                        width: 0;
-                        height: 0;
-
-                        border-left: 7px solid transparent;
-                        border-right: 7px solid transparent;
-                        border-top: 14px solid ${color};
-
-                        filter:
-                          drop-shadow(0 0 1px #000);
-                      "
-                    ></div>
-                  `,
-
-                  iconSize: [14, 14],
-
-                  iconAnchor: [7, 7]
-
-                })
-              }
-            );
-
-          },
-
-        onEachFeature:
-          (feature, layer) => {
-
-            layer.on(
-              "click",
-              () => {
-
-                showDamagePointDetails(
-                  feature.properties
-                );
-
-              }
-            );
-
-          }
-
-      }).addTo(map);
-
-  } catch (error) {
-
-    console.error(error);
+    map.removeLayer(
+      damagePointLayer
+    );
 
   }
 
-}
+  damagePointLayer =
+    L.geoJSON(data, {
 
-// ======================
-// LOAD POLYGONS
-// ======================
+      pointToLayer:
+        (feature, latlng) => {
+
+          const color =
+            getEFColor(
+              feature.properties.RATING
+            );
+
+          return L.marker(
+            latlng,
+            {
+              icon: L.divIcon({
+
+                className:
+                  "damagePoint",
+
+                html: `
+                  <div
+                    style="
+                      width:0;
+                      height:0;
+
+                      border-left:6px solid transparent;
+                      border-right:6px solid transparent;
+                      border-top:12px solid ${color};
+
+                      transform:rotate(180deg);
+                    "
+                  ></div>
+                `,
+
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+
+              })
+            }
+          );
+
+        },
+
+      onEachFeature:
+        (feature, layer) => {
+
+          layer.on(
+            "click",
+            () => {
+
+              openDetails(
+                feature.properties
+              );
+
+            }
+          );
+
+        }
+
+    }).addTo(map);
+
+}
 
 async function loadDamagePolygons() {
 
-  try {
+  const url =
+    `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/2/query?where=1%3D1&outFields=*&f=geojson`;
 
-    const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/2/query?where=1%3D1&outFields=*&f=geojson`;
+  const response =
+    await fetch(url);
 
-    const response =
-      await fetch(url);
+  const data =
+    await response.json();
 
-    const data =
-      await response.json();
+  if (polygonLayer) {
 
-    if (polygonLayer) {
-
-      map.removeLayer(
-        polygonLayer
-      );
-
-    }
-
-    polygonLayer =
-      L.geoJSON(data, {
-
-        style: feature => ({
-
-          color:
-            getEFColor(
-              feature.properties.RATING
-            ),
-
-          fillColor:
-            getEFColor(
-              feature.properties.RATING
-            ),
-
-          weight: 2,
-
-          opacity: 1,
-
-          fillOpacity: 0.25
-
-        }),
-
-        onEachFeature:
-          (feature, layer) => {
-
-            layer.on(
-              "mouseover",
-              () => {
-
-                layer.setStyle({
-                  weight: 4,
-                  fillOpacity: 0.45
-                });
-
-              }
-            );
-
-            layer.on(
-              "mouseout",
-              () => {
-
-                layer.setStyle({
-                  weight: 2,
-                  fillOpacity: 0.25
-                });
-
-              }
-            );
-
-            layer.on(
-              "click",
-              () => {
-
-                showTornadoDetails(
-                  feature.properties
-                );
-
-              }
-            );
-
-          }
-
-      }).addTo(map);
-
-  } catch (error) {
-
-    console.error(error);
+    map.removeLayer(
+      polygonLayer
+    );
 
   }
 
-}
+  polygonLayer =
+    L.geoJSON(data, {
 
-// ======================
-// APPLY FILTERS
-// ======================
+      style: feature => ({
+
+        color:
+          getEFColor(
+            feature.properties.RATING
+          ),
+
+        fillColor:
+          getEFColor(
+            feature.properties.RATING
+          ),
+
+        weight: 1,
+
+        opacity: 1,
+
+        fillOpacity: 0.08
+
+      })
+
+    }).addTo(map);
+
+}
 
 document
   .getElementById(
@@ -702,45 +435,6 @@ document
 
     }
   );
-
-// ======================
-// RESET FILTERS
-// ======================
-
-document
-  .getElementById(
-    "resetFilters"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      document
-        .getElementById(
-          "startDate"
-        )
-        .value = "";
-
-      document
-        .getElementById(
-          "endDate"
-        )
-        .value = "";
-
-      document
-        .getElementById(
-          "stateFilter"
-        )
-        .value = "";
-
-      loadTornadoData();
-
-    }
-  );
-
-// ======================
-// CLOSE PANEL
-// ======================
 
 document
   .getElementById(
@@ -760,10 +454,6 @@ document
 
     }
   );
-
-// ======================
-// LAYER TOGGLES
-// ======================
 
 document
   .getElementById(
@@ -839,23 +529,6 @@ document
 
     }
   );
-
-// ======================
-// MAP MOVE RELOAD
-// ======================
-
-map.on(
-  "moveend",
-  () => {
-
-    loadTornadoData();
-
-  }
-);
-
-// ======================
-// INITIAL LOAD
-// ======================
 
 loadTornadoData();
 

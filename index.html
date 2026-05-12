@@ -1,177 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NWS Damage Assessment Toolkit</title>
 
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet/dist/leaflet.css"
-  >
+  />
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- TOP BAR -->
   <div id="topbar">
 
-    <div id="topbarTitle">
+    <div id="title">
       NWS Damage Assessment Toolkit
     </div>
 
-    <div id="topbarControls">
+    <div id="toolbar">
 
-      <label>
-        Begin Date:
-      </label>
+      <label>Begin Date:</label>
+      <input type="date" id="startDate">
 
-      <input
-        type="date"
-        id="startDate"
-      >
-
-      <label>
-        End Date:
-      </label>
-
-      <input
-        type="date"
-        id="endDate"
-      >
+      <label>End Date:</label>
+      <input type="date" id="endDate">
 
       <select id="stateFilter">
-
-        <option value="">
-          All States
-        </option>
-
+        <option value="">All States</option>
       </select>
 
       <button id="applyFilters">
         Submit
       </button>
 
-      <button id="resetFilters">
-        Reset
-      </button>
-
     </div>
 
   </div>
 
-  <!-- SIDEBAR -->
   <div id="sidebar">
 
     <div class="sidebarSection">
 
-      <div class="sidebarTitle">
+      <div class="sectionTitle">
         Damage Viewer Layers
       </div>
 
-      <div class="layerRow">
-
-        <input
-          type="checkbox"
-          id="toggleTracks"
-          checked
-        >
-
-        <span>
-          Damage Lines
-        </span>
-
+      <div class="layerItem">
+        <input type="checkbox" id="toggleTracks" checked>
+        <span>Damage Lines</span>
       </div>
 
-      <div class="layerRow">
-
-        <input
-          type="checkbox"
-          id="togglePoints"
-          checked
-        >
-
-        <span>
-          Damage Points
-        </span>
-
+      <div class="layerItem">
+        <input type="checkbox" id="togglePoints" checked>
+        <span>Damage Points</span>
       </div>
 
-      <div class="layerRow">
-
-        <input
-          type="checkbox"
-          id="togglePolygons"
-          checked
-        >
-
-        <span>
-          Damage Polygons
-        </span>
-
+      <div class="layerItem">
+        <input type="checkbox" id="togglePolygons" checked>
+        <span>Damage Polygons</span>
       </div>
 
     </div>
 
     <div class="sidebarSection">
 
-      <div class="sidebarTitle">
+      <div class="sectionTitle">
         EF Scale
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef5"></span>
-        EF5
+      <div class="legendItem">
+        <span class="triangle ef5"></span> EF5
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef4"></span>
-        EF4
+      <div class="legendItem">
+        <span class="triangle ef4"></span> EF4
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef3"></span>
-        EF3
+      <div class="legendItem">
+        <span class="triangle ef3"></span> EF3
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef2"></span>
-        EF2
+      <div class="legendItem">
+        <span class="triangle ef2"></span> EF2
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef1"></span>
-        EF1
+      <div class="legendItem">
+        <span class="triangle ef1"></span> EF1
       </div>
 
-      <div class="efRow">
-        <span class="triangle ef0"></span>
-        EF0
+      <div class="legendItem">
+        <span class="triangle ef0"></span> EF0
       </div>
 
-      <div class="efRow">
-        <span class="triangle efu"></span>
-        EFU
+      <div class="legendItem">
+        <span class="triangle efu"></span> EFU
       </div>
 
     </div>
 
     <div class="sidebarSection">
 
-      <div class="sidebarTitle">
+      <div class="sectionTitle">
         Statistics
       </div>
 
@@ -194,10 +127,8 @@
 
   </div>
 
-  <!-- MAP -->
   <div id="map"></div>
 
-  <!-- DETAILS -->
   <div id="detailsPanel" class="hidden">
 
     <div id="detailsHeader">
@@ -213,14 +144,11 @@
     </div>
 
     <div id="detailsContent">
-
-      Select a feature.
-
+      Click a feature on the map.
     </div>
 
   </div>
 
-  <!-- LOADING -->
   <div id="loadingScreen">
 
     <div class="spinner"></div>
@@ -232,9 +160,7 @@
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
   <script src="app.js"></script>
 
 </body>
-
 </html>
