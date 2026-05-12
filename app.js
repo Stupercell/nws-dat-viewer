@@ -271,7 +271,7 @@ async function loadTornadoData() {
 // CLICK EVENT
 // ======================
 
-layer.on("click", () => {
+layer.on("click", async () => {
 
   const panel =
     document.getElementById("detailsPanel");
@@ -280,7 +280,12 @@ layer.on("click", () => {
     document.getElementById("detailsContent");
 
   panel.classList.remove("hidden");
-
+  
+const photoHtml =
+  await loadSurveyPhotos(
+    props.OBJECTID
+  );
+  
 content.innerHTML = `
 
   <div
@@ -351,7 +356,7 @@ content.innerHTML = `
     </p>
 
   </div>
-
+${photoHtml}
 `;
 });
       }
