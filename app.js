@@ -1,5 +1,5 @@
 // ======================
-// LOADING SCREEN
+// LOADING
 // ======================
 
 function showLoading() {
@@ -19,73 +19,28 @@ function hideLoading() {
 }
 
 // ======================
-// CREATE MAP
+// MAP
 // ======================
 
 const map =
-  L.map("map").setView(
+  L.map("map", {
+    zoomControl: true
+  }).setView(
     [39.5, -98.35],
     4
   );
 
 // ======================
-// BASEMAPS
+// BASEMAP
 // ======================
 
-const darkMap =
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        "&copy; OpenStreetMap contributors &copy; CARTO"
-    }
-  ).addTo(map);
-
-const satelliteMap =
-  L.tileLayer(
-    "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    {
-      attribution:
-        "Tiles &copy; Esri"
-    }
-  );
-
-const lightMap =
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        "&copy; OpenStreetMap contributors &copy; CARTO"
-    }
-  );
-
-const terrainMap =
-  L.tileLayer(
-    "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-    {
-      attribution:
-        "&copy; OpenTopoMap contributors"
-    }
-  );
-
-const baseMaps = {
-  "Dark": darkMap,
-  "Satellite": satelliteMap,
-  "Light": lightMap,
-  "Terrain": terrainMap
-};
-
-// ======================
-// OVERLAYS
-// ======================
-
-const overlayMaps = {};
-
-const layerControl =
-  L.control.layers(
-    baseMaps,
-    overlayMaps
-  ).addTo(map);
+L.tileLayer(
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+  {
+    attribution:
+      "Tiles © Esri"
+  }
+).addTo(map);
 
 // ======================
 // GLOBAL LAYERS
@@ -100,11 +55,15 @@ let polygonLayer;
 // ======================
 
 const states = [
-  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
-  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
-  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
-  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
-  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
+
+  "AL","AK","AZ","AR","CA","CO","CT","DE",
+  "FL","GA","HI","ID","IL","IN","IA","KS",
+  "KY","LA","ME","MD","MA","MI","MN","MS",
+  "MO","MT","NE","NV","NH","NJ","NM","NY",
+  "NC","ND","OH","OK","OR","PA","RI","SC",
+  "SD","TN","TX","UT","VT","VA","WA","WV",
+  "WI","WY"
+
 ];
 
 const stateSelect =
@@ -120,81 +79,15 @@ states.forEach(state => {
     );
 
   option.value = state;
-  option.textContent = state;
+
+  option.textContent =
+    state;
 
   stateSelect.appendChild(
     option
   );
 
 });
-
-// ======================
-// EF FILTER
-// ======================
-
-const efWrapper =
-  document.createElement("div");
-
-efWrapper.className =
-  "filter-group";
-
-const efLabel =
-  document.createElement("label");
-
-efLabel.textContent =
-  "EF Rating";
-
-const efFilter =
-  document.createElement("select");
-
-efFilter.id = "efFilter";
-
-[
-  "",
-  "EFU",
-  "EF0",
-  "EF1",
-  "EF2",
-  "EF3",
-  "EF3+",
-  "EF4",
-  "EF5"
-].forEach(rating => {
-
-  const option =
-    document.createElement(
-      "option"
-    );
-
-  option.value = rating;
-
-  option.textContent =
-    rating === ""
-      ? "All Ratings"
-      : rating;
-
-  efFilter.appendChild(
-    option
-  );
-
-});
-
-efWrapper.appendChild(
-  efLabel
-);
-
-efWrapper.appendChild(
-  efFilter
-);
-
-document
-  .getElementById("sidebar")
-  .insertBefore(
-    efWrapper,
-    document.getElementById(
-      "applyFilters"
-    )
-  );
 
 // ======================
 // DAT COLORS
@@ -216,9 +109,6 @@ function getEFColor(rating) {
     case "EF3":
       return "#ff9900";
 
-    case "EF3+":
-      return "#ff9900";
-
     case "EF4":
       return "#ff0000";
 
@@ -230,51 +120,10 @@ function getEFColor(rating) {
 
     default:
       return "#9e9e9e";
+
   }
-}
-
-// ======================
-// LIGHTBOX
-// ======================
-
-function openLightbox(imageUrl) {
-
-  const lightbox =
-    document.getElementById(
-      "lightbox"
-    );
-
-  const image =
-    document.getElementById(
-      "lightboxImage"
-    );
-
-  image.src = imageUrl;
-
-  lightbox.classList.remove(
-    "hidden"
-  );
 
 }
-
-document
-  .getElementById(
-    "closeLightbox"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      document
-        .getElementById(
-          "lightbox"
-        )
-        .classList.add(
-          "hidden"
-        );
-
-    }
-  );
 
 // ======================
 // DATE FORMAT
@@ -297,75 +146,7 @@ function formatDate(value) {
     return "N/A";
 
   }
-}
 
-// ======================
-// LOAD PHOTOS
-// ======================
-
-async function loadSurveyPhotos(
-  objectId
-) {
-
-  try {
-
-    const attachmentUrl =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments?f=json`;
-
-    const response =
-      await fetch(
-        attachmentUrl
-      );
-
-    const data =
-      await response.json();
-
-    if (
-      !data.attachmentInfos ||
-      data.attachmentInfos.length === 0
-    ) {
-
-      return `
-        <p>No survey photos available.</p>
-      `;
-    }
-
-    let html = `
-      <div class="photo-gallery">
-
-        <h3>Survey Photos</h3>
-
-        <div class="photo-grid">
-    `;
-
-    data.attachmentInfos.forEach(
-      photo => {
-
-        const imageUrl =
-          `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/${objectId}/attachments/${photo.id}`;
-
-        html += `
-          <img
-            src="${imageUrl}"
-            onclick="openLightbox('${imageUrl}')"
-          >
-        `;
-      }
-    );
-
-    html += `
-        </div>
-      </div>
-    `;
-
-    return html;
-
-  } catch {
-
-    return `
-      <p>Error loading photos.</p>
-    `;
-  }
 }
 
 // ======================
@@ -386,24 +167,26 @@ function updateStats(features) {
       f => f.properties.RATING
     );
 
-  const order =
-    [
-      "EFU",
-      "EF0",
-      "EF1",
-      "EF2",
-      "EF3",
-      "EF3+",
-      "EF4",
-      "EF5"
-    ];
+  const order = [
+    "EFU",
+    "EF0",
+    "EF1",
+    "EF2",
+    "EF3",
+    "EF4",
+    "EF5"
+  ];
 
   let strongest = "N/A";
 
-  order.forEach(r => {
+  order.forEach(rating => {
 
-    if (ratings.includes(r)) {
-      strongest = r;
+    if (
+      ratings.includes(rating)
+    ) {
+
+      strongest = rating;
+
     }
 
   });
@@ -430,11 +213,12 @@ function updateStats(features) {
       states.size;
 
 }
+
 // ======================
 // TORNADO DETAILS
 // ======================
 
-async function showTornadoDetails(
+function showTornadoDetails(
   props
 ) {
 
@@ -452,166 +236,76 @@ async function showTornadoDetails(
     "hidden"
   );
 
-  const photoHtml =
-    await loadSurveyPhotos(
-      props.OBJECTID
-    );
-
   content.innerHTML = `
 
-    <div
-      class="detail-header"
-      style="
-        background:
-        ${getEFColor(props.RATING)};
-      "
-    >
+    <table class="dat-table">
 
-      <h2>
-        ${props.RATING || "EFU"}
-      </h2>
+      <tr>
+        <td>event_id</td>
+        <td>${props.EVENT_ID || "N/A"}</td>
+      </tr>
 
-      <div>
-        ${props.EVENT_ID || "Unknown Event"}
-      </div>
+      <tr>
+        <td>rating</td>
+        <td>${props.RATING || "EFU"}</td>
+      </tr>
 
-    </div>
+      <tr>
+        <td>state</td>
+        <td>${props.STATE || "N/A"}</td>
+      </tr>
 
-    <div class="detail-grid">
+      <tr>
+        <td>county</td>
+        <td>${props.COUNTY || "N/A"}</td>
+      </tr>
 
-      <div class="detail-card">
+      <tr>
+        <td>wfo</td>
+        <td>${props.WFO || "N/A"}</td>
+      </tr>
 
-        <div class="detail-card-label">
-          State
-        </div>
+      <tr>
+        <td>injuries</td>
+        <td>${props.INJURIES || 0}</td>
+      </tr>
 
-        <div class="detail-card-value">
-          ${props.STATE || "N/A"}
-        </div>
+      <tr>
+        <td>fatalities</td>
+        <td>${props.FATALITIES || 0}</td>
+      </tr>
 
-      </div>
+      <tr>
+        <td>path_length</td>
+        <td>${props.PATH_LENGTH || "N/A"}</td>
+      </tr>
 
-      <div class="detail-card">
+      <tr>
+        <td>path_width</td>
+        <td>${props.PATH_WIDTH || "N/A"}</td>
+      </tr>
 
-        <div class="detail-card-label">
-          County
-        </div>
+      <tr>
+        <td>max_wind</td>
+        <td>${props.MAX_WIND || "N/A"}</td>
+      </tr>
 
-        <div class="detail-card-value">
-          ${props.COUNTY || "N/A"}
-        </div>
+      <tr>
+        <td>begin_date</td>
+        <td>${formatDate(props.BEGIN_DATE)}</td>
+      </tr>
 
-      </div>
+      <tr>
+        <td>end_date</td>
+        <td>${formatDate(props.END_DATE)}</td>
+      </tr>
 
-      <div class="detail-card">
+      <tr>
+        <td>comments</td>
+        <td>${props.COMMENTS || "None"}</td>
+      </tr>
 
-        <div class="detail-card-label">
-          Injuries
-        </div>
-
-        <div class="detail-card-value">
-          ${props.INJURIES || 0}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Fatalities
-        </div>
-
-        <div class="detail-card-value">
-          ${props.FATALITIES || 0}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Path Length
-        </div>
-
-        <div class="detail-card-value">
-          ${props.PATH_LENGTH || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Path Width
-        </div>
-
-        <div class="detail-card-value">
-          ${props.PATH_WIDTH || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Max Wind
-        </div>
-
-        <div class="detail-card-value">
-          ${props.MAX_WIND || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          WFO
-        </div>
-
-        <div class="detail-card-value">
-          ${props.WFO || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Begin Date
-        </div>
-
-        <div class="detail-card-value">
-          ${formatDate(props.BEGIN_DATE)}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          End Date
-        </div>
-
-        <div class="detail-card-value">
-          ${formatDate(props.END_DATE)}
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="comment-box">
-
-      <h3>Survey Comments</h3>
-
-      <p>
-        ${props.COMMENTS || "No comments available."}
-      </p>
-
-    </div>
-
-    ${photoHtml}
+    </table>
 
   `;
 
@@ -641,62 +335,39 @@ function showDamagePointDetails(
 
   content.innerHTML = `
 
-    <div
-      class="detail-header"
-      style="
-        background:#00d5ff;
-      "
-    >
+    <table class="dat-table">
 
-      <h2>
-        Damage Point
-      </h2>
+      <tr>
+        <td>damage_indicator</td>
+        <td>${props.DI || "N/A"}</td>
+      </tr>
 
-      <div>
-        ${props.DI || "Unknown"}
-      </div>
+      <tr>
+        <td>dod</td>
+        <td>${props.DOD || "N/A"}</td>
+      </tr>
 
-    </div>
+      <tr>
+        <td>rating</td>
+        <td>${props.RATING || "EFU"}</td>
+      </tr>
 
-    <div class="detail-grid">
+      <tr>
+        <td>estimated_wind</td>
+        <td>${props.ESTIMATED_WIND || "N/A"}</td>
+      </tr>
 
-      <div class="detail-card">
+      <tr>
+        <td>wfo</td>
+        <td>${props.WFO || "N/A"}</td>
+      </tr>
 
-        <div class="detail-card-label">
-          Damage Indicator
-        </div>
+      <tr>
+        <td>comments</td>
+        <td>${props.COMMENTS || "None"}</td>
+      </tr>
 
-        <div class="detail-card-value">
-          ${props.DI || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Degree of Damage
-        </div>
-
-        <div class="detail-card-value">
-          ${props.DOD || "N/A"}
-        </div>
-
-      </div>
-
-      <div class="detail-card">
-
-        <div class="detail-card-label">
-          Estimated Wind
-        </div>
-
-        <div class="detail-card-value">
-          ${props.ESTIMATED_WIND || "N/A"}
-        </div>
-
-      </div>
-
-    </div>
+    </table>
 
   `;
 
@@ -719,35 +390,6 @@ async function loadTornadoData() {
         )
         .value;
 
-    const ef =
-      document
-        .getElementById(
-          "efFilter"
-        )
-        .value;
-
-    const search =
-      document
-        .getElementById(
-          "searchInput"
-        )
-        .value
-        .trim();
-
-    const startDate =
-      document
-        .getElementById(
-          "startDate"
-        )
-        .value;
-
-    const endDate =
-      document
-        .getElementById(
-          "endDate"
-        )
-        .value;
-
     let where = "1=1";
 
     if (state) {
@@ -755,38 +397,7 @@ async function loadTornadoData() {
       where += `
         AND STATE='${state}'
       `;
-    }
 
-    if (ef) {
-
-      where += `
-        AND RATING='${ef}'
-      `;
-    }
-
-    if (search) {
-
-      where += `
-        AND (
-          EVENT_ID LIKE '%${search}%'
-          OR COMMENTS LIKE '%${search}%'
-          OR CITY LIKE '%${search}%'
-          OR COUNTY LIKE '%${search}%'
-          OR WFO LIKE '%${search}%'
-          OR STATE LIKE '%${search}%'
-        )
-      `;
-    }
-
-    if (
-      startDate &&
-      endDate
-    ) {
-
-      where += `
-        AND BEGIN_DATE >= DATE '${startDate}'
-        AND BEGIN_DATE <= DATE '${endDate}'
-      `;
     }
 
     const bounds =
@@ -824,7 +435,7 @@ async function loadTornadoData() {
 
           weight: 3,
 
-          opacity: 0.95
+          opacity: 1
 
         }),
 
@@ -855,9 +466,9 @@ async function loadTornadoData() {
 
             layer.on(
               "click",
-              async () => {
+              () => {
 
-                await showTornadoDetails(
+                showTornadoDetails(
                   feature.properties
                 );
 
@@ -872,35 +483,15 @@ async function loadTornadoData() {
       data.features
     );
 
-    if (
-      !overlayMaps[
-        "Tornado Paths"
-      ]
-    ) {
-
-      overlayMaps[
-        "Tornado Paths"
-      ] = tornadoLayer;
-
-      layerControl.addOverlay(
-        tornadoLayer,
-        "Tornado Paths"
-      );
-
-    }
-
   } catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
   }
 
   hideLoading();
 
 }
-
 // ======================
 // LOAD DAMAGE POINTS
 // ======================
@@ -932,21 +523,40 @@ async function loadDamagePoints() {
         pointToLayer:
           (feature, latlng) => {
 
-            return L.circleMarker(
+            const color =
+              getEFColor(
+                feature.properties.RATING
+              );
+
+            return L.marker(
               latlng,
               {
-                radius: 6,
+                icon: L.divIcon({
 
-                fillColor:
-                  getEFColor(
-                    feature.properties.RATING
-                  ),
+                  className:
+                    "damage-point-icon",
 
-                color: "#ffffff",
+                  html: `
+                    <div
+                      style="
+                        width: 0;
+                        height: 0;
 
-                weight: 1,
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
+                        border-top: 14px solid ${color};
 
-                fillOpacity: 0.95
+                        filter:
+                          drop-shadow(0 0 1px #000);
+                      "
+                    ></div>
+                  `,
+
+                  iconSize: [14, 14],
+
+                  iconAnchor: [7, 7]
+
+                })
               }
             );
 
@@ -970,34 +580,16 @@ async function loadDamagePoints() {
 
       }).addTo(map);
 
-    if (
-      !overlayMaps[
-        "Damage Points"
-      ]
-    ) {
-
-      overlayMaps[
-        "Damage Points"
-      ] = damagePointLayer;
-
-      layerControl.addOverlay(
-        damagePointLayer,
-        "Damage Points"
-      );
-
-    }
-
   } catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
   }
+
 }
 
 // ======================
-// LOAD DAMAGE POLYGONS
+// LOAD POLYGONS
 // ======================
 
 async function loadDamagePolygons() {
@@ -1038,7 +630,7 @@ async function loadDamagePolygons() {
 
           weight: 2,
 
-          opacity: 0.9,
+          opacity: 1,
 
           fillOpacity: 0.25
 
@@ -1052,11 +644,8 @@ async function loadDamagePolygons() {
               () => {
 
                 layer.setStyle({
-
                   weight: 4,
-
                   fillOpacity: 0.45
-
                 });
 
               }
@@ -1067,11 +656,8 @@ async function loadDamagePolygons() {
               () => {
 
                 layer.setStyle({
-
                   weight: 2,
-
                   fillOpacity: 0.25
-
                 });
 
               }
@@ -1079,9 +665,9 @@ async function loadDamagePolygons() {
 
             layer.on(
               "click",
-              async () => {
+              () => {
 
-                await showTornadoDetails(
+                showTornadoDetails(
                   feature.properties
                 );
 
@@ -1092,30 +678,12 @@ async function loadDamagePolygons() {
 
       }).addTo(map);
 
-    if (
-      !overlayMaps[
-        "Damage Polygons"
-      ]
-    ) {
-
-      overlayMaps[
-        "Damage Polygons"
-      ] = polygonLayer;
-
-      layerControl.addOverlay(
-        polygonLayer,
-        "Damage Polygons"
-      );
-
-    }
-
   } catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
   }
+
 }
 
 // ======================
@@ -1136,64 +704,12 @@ document
   );
 
 // ======================
-// QUICK FILTERS
-// ======================
-
-document
-  .querySelectorAll(
-    ".quickFilterBtn"
-  )
-  .forEach(btn => {
-
-    btn.addEventListener(
-      "click",
-      () => {
-
-        const days =
-          parseInt(
-            btn.dataset.days
-          );
-
-        const end =
-          new Date();
-
-        const start =
-          new Date();
-
-        start.setDate(
-          end.getDate() - days
-        );
-
-        document
-          .getElementById(
-            "startDate"
-          )
-          .value =
-            start
-              .toISOString()
-              .split("T")[0];
-
-        document
-          .getElementById(
-            "endDate"
-          )
-          .value =
-            end
-              .toISOString()
-              .split("T")[0];
-
-      }
-    );
-
-  });
-
-// ======================
-// MOBILE SIDEBAR
+// RESET FILTERS
 // ======================
 
 document
   .getElementById(
-    "mobileFilterToggle"
+    "resetFilters"
   )
   .addEventListener(
     "click",
@@ -1201,17 +717,29 @@ document
 
       document
         .getElementById(
-          "sidebar"
+          "startDate"
         )
-        .classList.toggle(
-          "mobile-open"
-        );
+        .value = "";
+
+      document
+        .getElementById(
+          "endDate"
+        )
+        .value = "";
+
+      document
+        .getElementById(
+          "stateFilter"
+        )
+        .value = "";
+
+      loadTornadoData();
 
     }
   );
 
 // ======================
-// CLOSE DETAILS PANEL
+// CLOSE PANEL
 // ======================
 
 document
@@ -1229,6 +757,85 @@ document
         .classList.add(
           "hidden"
         );
+
+    }
+  );
+
+// ======================
+// LAYER TOGGLES
+// ======================
+
+document
+  .getElementById(
+    "toggleTracks"
+  )
+  .addEventListener(
+    "change",
+    e => {
+
+      if (e.target.checked) {
+
+        map.addLayer(
+          tornadoLayer
+        );
+
+      } else {
+
+        map.removeLayer(
+          tornadoLayer
+        );
+
+      }
+
+    }
+  );
+
+document
+  .getElementById(
+    "togglePoints"
+  )
+  .addEventListener(
+    "change",
+    e => {
+
+      if (e.target.checked) {
+
+        map.addLayer(
+          damagePointLayer
+        );
+
+      } else {
+
+        map.removeLayer(
+          damagePointLayer
+        );
+
+      }
+
+    }
+  );
+
+document
+  .getElementById(
+    "togglePolygons"
+  )
+  .addEventListener(
+    "change",
+    e => {
+
+      if (e.target.checked) {
+
+        map.addLayer(
+          polygonLayer
+        );
+
+      } else {
+
+        map.removeLayer(
+          polygonLayer
+        );
+
+      }
 
     }
   );
