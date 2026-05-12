@@ -35,6 +35,7 @@
   <!-- SIDEBAR -->
   <div id="sidebar">
 
+    <!-- HEADER -->
     <div class="sidebar-header">
 
       <h1>NWS DAT Viewer</h1>
@@ -46,7 +47,6 @@
     </div>
 
     <!-- SEARCH -->
-
     <div class="filter-group">
 
       <label>
@@ -56,13 +56,12 @@
       <input
         type="text"
         id="searchInput"
-        placeholder="City, County, Event ID..."
+        placeholder="County, WFO, Event ID..."
       >
 
     </div>
 
-    <!-- DATE FILTERS -->
-
+    <!-- DATE -->
     <div class="filter-group">
 
       <label>
@@ -90,7 +89,6 @@
     </div>
 
     <!-- STATE -->
-
     <div class="filter-group">
 
       <label>
@@ -108,95 +106,161 @@
     </div>
 
     <!-- QUICK FILTERS -->
-
     <div class="quick-filters">
 
-      <button class="quickFilterBtn" data-days="1">
+      <button
+        class="quickFilterBtn"
+        data-days="1"
+      >
         Today
       </button>
 
-      <button class="quickFilterBtn" data-days="7">
+      <button
+        class="quickFilterBtn"
+        data-days="7"
+      >
         7 Days
       </button>
 
-      <button class="quickFilterBtn" data-days="30">
+      <button
+        class="quickFilterBtn"
+        data-days="30"
+      >
         30 Days
       </button>
 
-      <button class="quickFilterBtn" data-days="365">
+      <button
+        class="quickFilterBtn"
+        data-days="365"
+      >
         1 Year
       </button>
 
     </div>
 
     <!-- APPLY -->
-
     <button id="applyFilters">
       Apply Filters
     </button>
 
     <!-- STATS -->
-
     <div id="statsPanel">
 
       <h3>Statistics</h3>
 
       <div class="stat-row">
-        <span>Total Tornadoes</span>
-        <span id="statTotal">0</span>
+
+        <span>
+          Total Tornadoes
+        </span>
+
+        <span id="statTotal">
+          0
+        </span>
+
       </div>
 
       <div class="stat-row">
-        <span>Strongest Rating</span>
-        <span id="statStrongest">N/A</span>
+
+        <span>
+          Strongest Rating
+        </span>
+
+        <span id="statStrongest">
+          N/A
+        </span>
+
       </div>
 
       <div class="stat-row">
-        <span>Visible States</span>
-        <span id="statStates">0</span>
+
+        <span>
+          Visible States
+        </span>
+
+        <span id="statStates">
+          0
+        </span>
+
       </div>
 
     </div>
 
     <!-- LEGEND -->
-
     <div id="legend">
 
-      <h3>EF Scale</h3>
+      <h3>Tornado Ratings</h3>
 
       <div class="legend-item">
+
         <span class="legend-color ef0"></span>
+
         EF0
+
       </div>
 
       <div class="legend-item">
+
         <span class="legend-color ef1"></span>
+
         EF1
+
       </div>
 
       <div class="legend-item">
+
         <span class="legend-color ef2"></span>
+
         EF2
+
       </div>
 
       <div class="legend-item">
+
         <span class="legend-color ef3"></span>
+
         EF3
+
       </div>
 
       <div class="legend-item">
+
         <span class="legend-color ef4"></span>
+
         EF4
+
       </div>
 
       <div class="legend-item">
+
         <span class="legend-color ef5"></span>
+
         EF5
+
       </div>
 
       <div class="legend-item">
+
+        <span
+          class="legend-color"
+          style="background:#9e9e9e;"
+        ></span>
+
+        EFU
+
+      </div>
+
+      <hr style="
+        border-color:#374151;
+        margin:16px 0;
+      ">
+
+      <div class="legend-item">
+
         <span class="legend-point"></span>
+
         Damage Point
+
       </div>
 
     </div>
@@ -218,7 +282,8 @@
       <h2>Select a feature</h2>
 
       <p>
-        Click a tornado path or damage point.
+        Click a tornado path,
+        polygon, or damage point.
       </p>
 
     </div>
