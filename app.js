@@ -14,6 +14,10 @@ function hideLoading() {
 
 }
 
+// ======================
+// MAP
+// ======================
+
 const map =
   L.map("map").setView(
     [39.5, -98.35],
@@ -28,9 +32,17 @@ L.tileLayer(
   }
 ).addTo(map);
 
+// ======================
+// GLOBALS
+// ======================
+
 let tornadoLayer;
 let damagePointLayer;
 let polygonLayer;
+
+// ======================
+// STATES
+// ======================
 
 const states = [
   "AL","AK","AZ","AR","CA","CO","CT","DE",
@@ -51,8 +63,7 @@ states.forEach(state => {
 
   option.value = state;
 
-  option.textContent =
-    state;
+  option.textContent = state;
 
   document
     .getElementById(
@@ -61,6 +72,10 @@ states.forEach(state => {
     .appendChild(option);
 
 });
+
+// ======================
+// COLORS
+// ======================
 
 function getEFColor(rating) {
 
@@ -84,6 +99,9 @@ function getEFColor(rating) {
     case "EF5":
       return "#b000b0";
 
+    case "EFU":
+      return "#9e9e9e";
+
     default:
       return "#9e9e9e";
 
@@ -91,25 +109,52 @@ function getEFColor(rating) {
 
 }
 
-function formatDate(value) {
+// ======================
+// DETAILS PANEL
+// ======================
 
-  if (!value) {
-    return "N/A";
-  }
+function openDetails(props) {
 
-  try {
+  document
+    .getElementById(
+      "detailsPanel"
+    )
+    .classList.remove(
+      "hidden"
+    );
 
-    return new Date(
-      value
-    ).toLocaleString();
+  let html = `
+    <table class="datTable">
+  `;
 
-  } catch {
+  Object.entries(props).forEach(
+    ([key, value]) => {
 
-    return "N/A";
+      html += `
+        <tr>
+          <td>${key}</td>
+          <td>${value ?? "N/A"}</td>
+        </tr>
+      `;
 
-  }
+    }
+  );
+
+  html += `
+    </table>
+  `;
+
+  document
+    .getElementById(
+      "detailsContent"
+    )
+    .innerHTML = html;
 
 }
+
+// ======================
+// STATS
+// ======================
 
 function updateStats(features) {
 
@@ -156,7 +201,7 @@ function updateStats(features) {
     .textContent =
       strongest;
 
-  const statesVisible =
+  const visibleStates =
     new Set(
       features.map(
         f => f.properties.STATE
@@ -168,50 +213,25 @@ function updateStats(features) {
       "statStates"
     )
     .textContent =
-      statesVisible.size;
+      visibleStates.size;
 
 }
 
-function openDetails(props) {
+// ======================
+// LOAD ALL DATA
+// ======================
 
-  document
-    .getElementById(
-      "detailsPanel"
-    )
-    .classList.remove(
-      "hidden"
-    );
-
-  document
-    .getElementById(
-      "detailsContent"
-    )
-    .innerHTML = `
-
-      <table class="datTable">
-
-        ${Object.entries(props)
-          .map(
-            ([key, value]) => `
-              <tr>
-                <td>${key}</td>
-                <td>${value ?? "N/A"}</td>
-              </tr>
-            `
-          )
-          .join("")}
-
-      </table>
-
-    `;
-
-}
-
-async function loadTornadoData() {
+async function loadData() {
 
   showLoading();
 
   try {
+
+    const bounds =
+      map.getBounds();
+
+    const geometry =
+      `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
 
     const state =
       document
@@ -230,14 +250,20 @@ async function loadTornadoData() {
 
     }
 
-    const url =
-      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&outFields=*&f=geojson`;
+    // ======================
+    // TORNADO TRACKS
+    // ======================
 
-    const response =
-      await fetch(url);
+    const tornadoUrl =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/0/query?where=${encodeURIComponent(where)}&geometry=${geometry}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outFields=*&f=geojson`;
 
-    const data =
-      await response.json();
+    const tornadoResponse =
+      await fetch(
+        tornadoUrl
+      );
+
+    const tornadoData =
+      await tornadoResponse.json();
 
     if (tornadoLayer) {
 
@@ -248,7 +274,7 @@ async function loadTornadoData() {
     }
 
     tornadoLayer =
-      L.geoJSON(data, {
+      L.geoJSON(tornadoData, {
 
         style: feature => ({
 
@@ -282,8 +308,141 @@ async function loadTornadoData() {
       }).addTo(map);
 
     updateStats(
-      data.features
+      tornadoData.features
     );
+
+    // ======================
+    // DAMAGE POINTS
+    // ======================
+
+    const pointUrl =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/1/query?where=${encodeURIComponent(where)}&geometry=${geometry}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outFields=*&f=geojson`;
+
+    const pointResponse =
+      await fetch(
+        pointUrl
+      );
+
+    const pointData =
+      await pointResponse.json();
+
+    if (damagePointLayer) {
+
+      map.removeLayer(
+        damagePointLayer
+      );
+
+    }
+
+    damagePointLayer =
+      L.geoJSON(pointData, {
+
+        pointToLayer:
+          (feature, latlng) => {
+
+            const color =
+              getEFColor(
+                feature.properties.RATING
+              );
+
+            return L.marker(
+              latlng,
+              {
+                icon: L.divIcon({
+
+                  className:
+                    "damagePoint",
+
+                  html: `
+                    <div
+                      style="
+                        width:0;
+                        height:0;
+
+                        border-left:6px solid transparent;
+                        border-right:6px solid transparent;
+                        border-top:12px solid ${color};
+
+                        transform:rotate(180deg);
+                      "
+                    ></div>
+                  `,
+
+                  iconSize: [12, 12],
+
+                  iconAnchor: [6, 6]
+
+                })
+              }
+            );
+
+          },
+
+        onEachFeature:
+          (feature, layer) => {
+
+            layer.on(
+              "click",
+              () => {
+
+                openDetails(
+                  feature.properties
+                );
+
+              }
+            );
+
+          }
+
+      }).addTo(map);
+
+    // ======================
+    // POLYGONS
+    // ======================
+
+    const polygonUrl =
+      `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/2/query?where=${encodeURIComponent(where)}&geometry=${geometry}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&outFields=*&f=geojson`;
+
+    const polygonResponse =
+      await fetch(
+        polygonUrl
+      );
+
+    const polygonData =
+      await polygonResponse.json();
+
+    if (polygonLayer) {
+
+      map.removeLayer(
+        polygonLayer
+      );
+
+    }
+
+    polygonLayer =
+      L.geoJSON(polygonData, {
+
+        style: feature => ({
+
+          color:
+            getEFColor(
+              feature.properties.RATING
+            ),
+
+          fillColor:
+            getEFColor(
+              feature.properties.RATING
+            ),
+
+          weight: 1,
+
+          opacity: 1,
+
+          fillOpacity: 0.08
+
+        })
+
+      }).addTo(map);
 
   } catch (error) {
 
@@ -295,133 +454,9 @@ async function loadTornadoData() {
 
 }
 
-async function loadDamagePoints() {
-
-  const url =
-    `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/1/query?where=1%3D1&outFields=*&f=geojson`;
-
-  const response =
-    await fetch(url);
-
-  const data =
-    await response.json();
-
-  if (damagePointLayer) {
-
-    map.removeLayer(
-      damagePointLayer
-    );
-
-  }
-
-  damagePointLayer =
-    L.geoJSON(data, {
-
-      pointToLayer:
-        (feature, latlng) => {
-
-          const color =
-            getEFColor(
-              feature.properties.RATING
-            );
-
-          return L.marker(
-            latlng,
-            {
-              icon: L.divIcon({
-
-                className:
-                  "damagePoint",
-
-                html: `
-                  <div
-                    style="
-                      width:0;
-                      height:0;
-
-                      border-left:6px solid transparent;
-                      border-right:6px solid transparent;
-                      border-top:12px solid ${color};
-
-                      transform:rotate(180deg);
-                    "
-                  ></div>
-                `,
-
-                iconSize: [12, 12],
-                iconAnchor: [6, 6]
-
-              })
-            }
-          );
-
-        },
-
-      onEachFeature:
-        (feature, layer) => {
-
-          layer.on(
-            "click",
-            () => {
-
-              openDetails(
-                feature.properties
-              );
-
-            }
-          );
-
-        }
-
-    }).addTo(map);
-
-}
-
-async function loadDamagePolygons() {
-
-  const url =
-    `https://services.dat.noaa.gov/arcgis/rest/services/nws_damageassessmenttoolkit/DamageViewer/FeatureServer/2/query?where=1%3D1&outFields=*&f=geojson`;
-
-  const response =
-    await fetch(url);
-
-  const data =
-    await response.json();
-
-  if (polygonLayer) {
-
-    map.removeLayer(
-      polygonLayer
-    );
-
-  }
-
-  polygonLayer =
-    L.geoJSON(data, {
-
-      style: feature => ({
-
-        color:
-          getEFColor(
-            feature.properties.RATING
-          ),
-
-        fillColor:
-          getEFColor(
-            feature.properties.RATING
-          ),
-
-        weight: 1,
-
-        opacity: 1,
-
-        fillOpacity: 0.08
-
-      })
-
-    }).addTo(map);
-
-}
+// ======================
+// FILTER BUTTON
+// ======================
 
 document
   .getElementById(
@@ -431,10 +466,14 @@ document
     "click",
     () => {
 
-      loadTornadoData();
+      loadData();
 
     }
   );
+
+// ======================
+// CLOSE PANEL
+// ======================
 
 document
   .getElementById(
@@ -455,83 +494,21 @@ document
     }
   );
 
-document
-  .getElementById(
-    "toggleTracks"
-  )
-  .addEventListener(
-    "change",
-    e => {
+// ======================
+// MAP MOVE
+// ======================
 
-      if (e.target.checked) {
+map.on(
+  "moveend",
+  () => {
 
-        map.addLayer(
-          tornadoLayer
-        );
+    loadData();
 
-      } else {
+  }
+);
 
-        map.removeLayer(
-          tornadoLayer
-        );
+// ======================
+// INITIAL LOAD
+// ======================
 
-      }
-
-    }
-  );
-
-document
-  .getElementById(
-    "togglePoints"
-  )
-  .addEventListener(
-    "change",
-    e => {
-
-      if (e.target.checked) {
-
-        map.addLayer(
-          damagePointLayer
-        );
-
-      } else {
-
-        map.removeLayer(
-          damagePointLayer
-        );
-
-      }
-
-    }
-  );
-
-document
-  .getElementById(
-    "togglePolygons"
-  )
-  .addEventListener(
-    "change",
-    e => {
-
-      if (e.target.checked) {
-
-        map.addLayer(
-          polygonLayer
-        );
-
-      } else {
-
-        map.removeLayer(
-          polygonLayer
-        );
-
-      }
-
-    }
-  );
-
-loadTornadoData();
-
-loadDamagePoints();
-
-loadDamagePolygons();
+loadData();
