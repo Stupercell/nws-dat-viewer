@@ -140,3 +140,66 @@ button:hover {
     transform: translateY(100%);
   }
 }
+/* =========================
+   SURVEY DETAIL CARDS
+========================= */
+
+.detail-header {
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  color: white;
+}
+
+.detail-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.detail-card {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.detail-card-label {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.detail-card-value {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.comment-box {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 16px;
+  line-height: 1.5;
+}
+
+.comment-box h3 {
+  margin-top: 0;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-header h2 {
+    font-size: 22px;
+  }
+}
