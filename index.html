@@ -27,6 +27,11 @@
 
 <body>
 
+  <!-- MOBILE FILTER BUTTON -->
+  <button id="mobileFilterToggle">
+    ☰ Filters
+  </button>
+
   <!-- SIDEBAR -->
   <div id="sidebar">
 
@@ -40,7 +45,23 @@
 
     </div>
 
-    <!-- FILTERS -->
+    <!-- SEARCH -->
+
+    <div class="filter-group">
+
+      <label>
+        Search
+      </label>
+
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="City, County, Event ID..."
+      >
+
+    </div>
+
+    <!-- DATE FILTERS -->
 
     <div class="filter-group">
 
@@ -68,6 +89,8 @@
 
     </div>
 
+    <!-- STATE -->
+
     <div class="filter-group">
 
       <label>
@@ -84,9 +107,56 @@
 
     </div>
 
+    <!-- QUICK FILTERS -->
+
+    <div class="quick-filters">
+
+      <button class="quickFilterBtn" data-days="1">
+        Today
+      </button>
+
+      <button class="quickFilterBtn" data-days="7">
+        7 Days
+      </button>
+
+      <button class="quickFilterBtn" data-days="30">
+        30 Days
+      </button>
+
+      <button class="quickFilterBtn" data-days="365">
+        1 Year
+      </button>
+
+    </div>
+
+    <!-- APPLY -->
+
     <button id="applyFilters">
       Apply Filters
     </button>
+
+    <!-- STATS -->
+
+    <div id="statsPanel">
+
+      <h3>Statistics</h3>
+
+      <div class="stat-row">
+        <span>Total Tornadoes</span>
+        <span id="statTotal">0</span>
+      </div>
+
+      <div class="stat-row">
+        <span>Strongest Rating</span>
+        <span id="statStrongest">N/A</span>
+      </div>
+
+      <div class="stat-row">
+        <span>Visible States</span>
+        <span id="statStates">0</span>
+      </div>
+
+    </div>
 
     <!-- LEGEND -->
 
@@ -95,51 +165,38 @@
       <h3>EF Scale</h3>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#22c55e;"
-        ></span>
+        <span class="legend-color ef0"></span>
         EF0
       </div>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#eab308;"
-        ></span>
+        <span class="legend-color ef1"></span>
         EF1
       </div>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#f97316;"
-        ></span>
+        <span class="legend-color ef2"></span>
         EF2
       </div>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#ef4444;"
-        ></span>
+        <span class="legend-color ef3"></span>
         EF3
       </div>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#d946ef;"
-        ></span>
+        <span class="legend-color ef4"></span>
         EF4
       </div>
 
       <div class="legend-item">
-        <span
-          class="legend-color"
-          style="background:#7e22ce;"
-        ></span>
+        <span class="legend-color ef5"></span>
         EF5
+      </div>
+
+      <div class="legend-item">
+        <span class="legend-point"></span>
+        Damage Point
       </div>
 
     </div>
@@ -158,13 +215,27 @@
 
     <div id="detailsContent">
 
-      <h2>Select a tornado</h2>
+      <h2>Select a feature</h2>
 
       <p>
-        Click a tornado path or damage point to view details.
+        Click a tornado path or damage point.
       </p>
 
     </div>
+
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="hidden">
+
+    <button id="closeLightbox">
+      ✕
+    </button>
+
+    <img
+      id="lightboxImage"
+      src=""
+    >
 
   </div>
 
